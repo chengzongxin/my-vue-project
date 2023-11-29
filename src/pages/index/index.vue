@@ -70,14 +70,18 @@
         </view>
       </view>
     </view>
+
+    <floatBtn @click="onClickBtn" />
   </view>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-
+import floatBtn from './floatBtn.vue'
 @Component({
-  components: {},
+  components: {
+    floatBtn,
+  },
 })
 export default class Index extends Vue {
   curIdx: number = 0
@@ -86,6 +90,10 @@ export default class Index extends Vue {
     console.log(e)
 
     this.curIdx = e.detail.current
+  }
+
+  onClickBtn() {
+    console.log('onClickBtn')
   }
 }
 </script>
