@@ -1,6 +1,5 @@
 <template>
   <view class="page">
-    <!-- <view class="height"></view> -->
     <!-- 用户信息卡片 -->
     <view class="user-info">
       <view class="info flex">
@@ -52,7 +51,7 @@
           </view>
         </view>
 
-        <swiper class="recommend" :current="0" @change="">
+        <swiper class="recommend" :current="0" @change="onChangeSwiper">
           <swiper-item v-for="(item, index) in [1, 2]" :key="index">
             <view class="recommend-item" v-for="item in [1, 2]">
               <view class="recommend-item-w">
@@ -67,14 +66,29 @@
         </swiper>
 
         <view class="swiper-dotbox" :style="'width: ' + 2 * 20 + 'rpx;'">
-          <view class="swiper-dot" :style="'left: ' + 0 * 20 + 'rpx;'"></view>
+          <view class="swiper-dot" :style="'left: ' + curIdx * 20 + 'rpx;'"></view>
         </view>
       </view>
     </view>
   </view>
 </template>
 
-<script lang="ts"></script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+
+@Component({
+  components: {},
+})
+export default class Index extends Vue {
+  curIdx: number = 0
+
+  onChangeSwiper(e: any) {
+    console.log(e)
+
+    this.curIdx = e.detail.current
+  }
+}
+</script>
 
 <style lang="less" scoped>
 .page {
@@ -243,8 +257,6 @@
         bottom: 12rpx;
         left: 50%;
         transform: translateX(-50%);
-
-        //width: 72rpx;
         height: 4rpx;
         background: #e9e9e9;
         border-radius: 3rpx;
