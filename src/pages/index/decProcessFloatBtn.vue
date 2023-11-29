@@ -11,8 +11,8 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   components: {},
 })
-export default class FloatBtn extends Vue {
-  name: string = 'floatBtn'
+export default class DecProcessFloatBtn extends Vue {
+  name: string = 'decProcessFloatBtn'
 }
 </script>
 

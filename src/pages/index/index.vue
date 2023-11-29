@@ -71,16 +71,16 @@
       </view>
     </view>
 
-    <floatBtn @click="onClickBtn" />
+    <decProcessFloatBtn @click="onClickBtn" />
   </view>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import floatBtn from './floatBtn.vue'
+import decProcessFloatBtn from './decProcessFloatBtn.vue'
 @Component({
   components: {
-    floatBtn,
+    decProcessFloatBtn,
   },
 })
 export default class Index extends Vue {
