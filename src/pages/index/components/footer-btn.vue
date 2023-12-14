@@ -1,6 +1,8 @@
 <template>
   <div class="footer">
-    <button :font-size="32" border-radius="16" @click="handleClick" :loading="loading"><slot></slot></button>
+    <button class="btn" :font-size="32" border-radius="16" @click="handleClick" :loading="loading">
+      <slot></slot>
+    </button>
     <p class="first-phone-tips">允许土巴兔装修顾问稍后来电了解装修需求</p>
   </div>
 </template>
@@ -34,6 +36,10 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 2;
+  .btn {
+    background-color: #23c67d;
+    color: #ffffff;
+  }
   .first-phone-tips {
     width: 100%;
     padding-top: 20rpx;
