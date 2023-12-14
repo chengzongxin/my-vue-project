@@ -7,15 +7,16 @@
       widget-uid="compare_tab"
       @on-click-item="handleClickNavItem"
     />
-    <swiper class="content-swiper" ref="contentSwiper">
+    <swiper class="content-swiper" ref="contentSwiper" @change="syncSwipers" :current="activeIndex">
       <swiper-item v-for="(value, key) in imageList" :key="key">
-        <template v-for="(url, index) in value">
-          <div :class="key + '-' + (index + 1)" :key="url">
-            <!-- <image style="display: block; margin: 0 auto" :src="url" mode="widthFix" /> -->
-            <image :src="url" mode="widthFix" />
-          </div>
-        </template>
-        <service-scope v-if="key === 'part3'" />
+        <scroll-view scroll-y class="swiper-item">
+          <template v-for="(url, index) in value">
+            <div :class="key + '-' + (index + 1)" :key="url">
+              <image :src="url" mode="widthFix" />
+            </div>
+          </template>
+          <service-scope v-if="key === 'part3'" />
+        </scroll-view>
       </swiper-item>
     </swiper>
     <footer-btn @click="handleClick" :loading="submitLoading">{{ navList[activeIndex].btnText }}</footer-btn>
@@ -111,16 +112,21 @@ export default {
     // })
   },
   methods: {
-    syncSwipers() {
-      this.contentSwiper.on('slideChange', () => {
-        const currentIndex = this.contentSwiper.realIndex
-        this.activeIndex = currentIndex
-        this.$refs.navBar.moveAnchor(currentIndex)
-      })
+    syncSwipers(e) {
+      // console.log('syncSwipers', e)
+      // this.contentSwiper.on('slideChange', () => {
+      // const currentIndex = this.contentSwiper.realIndex
+      const currentIndex = e.detail.current
+      this.activeIndex = currentIndex
+      this.$refs.navBar.setActiveIndex(currentIndex)
+      // this.$refs.navBar.moveAnchor(currentIndex)
+      // })
     },
-    // handleClickNavItem(index) {
-    //   this.contentSwiper.slideTo(index, 300)
-    // },
+    handleClickNavItem(index) {
+      console.log(index)
+      this.activeIndex = index
+      // this.contentSwiper.slideTo(index, 300)
+    },
     handleClick() {
       const { tab, btnText } = compareNavList[this.activeIndex]
       // this.widgetReport(
@@ -215,24 +221,34 @@ export default {
 }
 .content-swiper {
   // padding-top: 88px;
-  min-height: 100vh;
+  // min-height: 100vh;
+  // height: calc(100% - 51px - 121px);
+  // height: 100%;
+  // height: calc(100%);
+  height: 100vh;
+
+  .swiper-item {
+    margin-top: 51px;
+    width: 100%;
+    height: calc(100% - 51px - 121px);
+  }
 }
 .part1-1 {
   width: 100%;
-  height: 404rpx;
+  height: 304rpx;
 
   image {
-    margin-top: 145rpx;
+    margin-top: 45rpx;
     margin-left: 59rpx;
     width: 558rpx;
   }
 }
 .part2-1 {
   width: 100%;
-  height: 404rpx;
+  height: 304rpx;
 
   image {
-    margin-top: 145rpx;
+    margin-top: 45rpx;
     margin-left: 59rpx;
     width: 611rpx;
     height: 193rpx;
@@ -240,10 +256,10 @@ export default {
 }
 .part3-1 {
   width: 100%;
-  height: 404rpx;
+  height: 304rpx;
 
   image {
-    margin-top: 145rpx;
+    margin-top: 45rpx;
     margin-left: 59rpx;
     width: 557rpx;
     height: 193rpx;
@@ -251,9 +267,16 @@ export default {
 }
 .part1-2,
 .part1-3,
-.part3-2 {
+.part2-2,
+.part2-3,
+.part3-2,
+.part3-3 {
   width: 710rpx;
   margin: auto;
+
+  image {
+    width: 100%;
+  }
 }
 .add-wx-modal {
   width: 634rpx;

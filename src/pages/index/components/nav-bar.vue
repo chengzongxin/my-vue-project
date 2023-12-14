@@ -49,6 +49,12 @@ export default {
       //   'webWidgetShow'
       // )
     },
+    setActiveIndex(index) {
+      if (index === this.active) {
+        return
+      }
+      this.active = index
+    },
     handleClickItem(index) {
       if (index === this.active) {
         return
