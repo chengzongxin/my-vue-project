@@ -1,34 +1,33 @@
-
 export const navList = [
   {
     tab: '先装修后支付',
-    btnText: '免费咨询'
+    btnText: '免费咨询',
   },
   {
     tab: '第三方质检',
-    btnText: '免费咨询'
+    btnText: '免费咨询',
   },
   {
     tab: '工地意外险',
-    btnText: '免费咨询'
+    btnText: '免费咨询',
   },
   {
     tab: '正品辅材',
-    btnText: '免费咨询'
+    btnText: '免费咨询',
   },
   {
     tab: '在线预算审核',
-    btnText: '免费咨询'
+    btnText: '免费咨询',
   },
   {
     tab: '陪同签约',
-    btnText: '免费咨询'
+    btnText: '免费咨询',
   },
   {
     tab: '验房服务',
-    btnText: '免费咨询'
-  }
-];
+    btnText: '免费咨询',
+  },
+]
 
 export const compareNavList = [
   {
@@ -37,7 +36,7 @@ export const compareNavList = [
     modalText: '点击加微信为您提供详细报价服务',
     ptag: ['3001125_1_1_11517', '3001225_1_1_11518'], // [ios, android]
     valuePointId: 184,
-    incWechatCode: 'JZCDBJG'
+    incWechatCode: 'JZCDBJG',
   },
   {
     tab: '比方案',
@@ -45,7 +44,7 @@ export const compareNavList = [
     modalText: '为您优选本地设计团队，免费定制设计方案',
     ptag: ['3001125_1_1_11515', '3001225_1_1_11516'],
     valuePointId: 184,
-    incWechatCode: 'JZCDBFA'
+    incWechatCode: 'JZCDBFA',
   },
   {
     tab: '比服务',
@@ -53,9 +52,9 @@ export const compareNavList = [
     modalText: '点击加微信为您提供1V1专属服务',
     ptag: ['3001125_1_1_11519', '3001225_1_1_11520'],
     valuePointId: 231,
-    incWechatCode: 'JZCDBFW'
+    incWechatCode: 'JZCDBFW',
   },
-];
+]
 
 export const CASELIST = [
   {
@@ -69,9 +68,10 @@ export const CASELIST = [
     hasServerNum: 11,
     projectProcessName: '竣工验收',
     estateName: '中信湾上六座花园',
-    supervisorHeadPath: 'https://picoa.t8tcdn.com/oa/avatar/21/headphoto_915421.jpg?x-oss-process=image/resize,m_fill,w_200,h_200&ts=1597245318',
+    supervisorHeadPath:
+      'https://picoa.t8tcdn.com/oa/avatar/21/headphoto_915421.jpg?x-oss-process=image/resize,m_fill,w_200,h_200&ts=1597245318',
     id: 127911,
-    lastSupervisorTimeStr: '2021.01.17'
+    lastSupervisorTimeStr: '2021.01.17',
   },
   {
     area: 134,
@@ -86,9 +86,9 @@ export const CASELIST = [
     estateName: '古北新城',
     supervisorHeadPath: 'https://oapp.to8to.com/app/download/viewaimg?img=56/headphoto_12556.jpg&mod=2&ts1515584592',
     id: 122104,
-    lastSupervisorTimeStr: '2021.05.29'
+    lastSupervisorTimeStr: '2021.05.29',
   },
-];
+]
 
 export const CASELIST_DEV = [
   {
@@ -102,9 +102,10 @@ export const CASELIST_DEV = [
     hasServerNum: 4,
     projectProcessName: '水电改造',
     estateName: '中兴通讯工业园南区人才公寓',
-    supervisorHeadPath: 'https://picoa.t8tcdn.com/oa/avatar/45/headphoto_11285545.jpg?x-oss-process=image/resize,m_fill,w_200,h_200&ts=1629170783',
+    supervisorHeadPath:
+      'https://picoa.t8tcdn.com/oa/avatar/45/headphoto_11285545.jpg?x-oss-process=image/resize,m_fill,w_200,h_200&ts=1629170783',
     id: 3663,
-    lastSupervisorTimeStr: '2021-08-25'
+    lastSupervisorTimeStr: '2021-08-25',
   },
   {
     area: 111.0,
@@ -117,11 +118,12 @@ export const CASELIST_DEV = [
     hasServerNum: 1,
     projectProcessName: '开工交底',
     estateName: '南山区南海大道',
-    supervisorHeadPath: 'https://picoa.t8tcdn.com/oa/avatar/45/headphoto_11285545.jpg?x-oss-process=image/resize,m_fill,w_200,h_200&ts=1629170783',
+    supervisorHeadPath:
+      'https://picoa.t8tcdn.com/oa/avatar/45/headphoto_11285545.jpg?x-oss-process=image/resize,m_fill,w_200,h_200&ts=1629170783',
     id: 3662,
-    lastSupervisorTimeStr: '2021-07-22'
+    lastSupervisorTimeStr: '2021-07-22',
   },
-];
+]
 
 export const EVALUATIONLIST = [
   {
@@ -130,7 +132,8 @@ export const EVALUATIONLIST = [
     time: '2022.11.10',
     cityName: '深圳',
     score: 5,
-    comment: '于工非常认真仔细，我平常出差多，基本没去过现场，不论质量问题，还是买东西报价都会咨询。耐心解答，特别认真负责！！',
+    comment:
+      '于工非常认真仔细，我平常出差多，基本没去过现场，不论质量问题，还是买东西报价都会咨询。耐心解答，特别认真负责！！',
   },
   {
     ownerPicPath: 'https://img.to8to.com/newheadphoto/v2/100/149.jpg',
@@ -140,8 +143,8 @@ export const EVALUATIONLIST = [
     score: 5,
     comment:
       '每一次质检涛哥都是兢兢业业的帮我解决问题，让我了解我的项目存在的隐患，且很切身处地的维护业主客户的利益 让我在装修队面前能让他们改整改的整改，让他们不能忽悠人 。第一次装修觉得钱花的最值就是涛哥和土巴兔的质检服务！绝对逢人推介！',
-  }
-];
+  },
+]
 
 export const SERVICELIST = [
   {
@@ -184,4 +187,4 @@ export const SERVICELIST = [
     unit: '次',
     widget_uid: 'jl_inspectroom_btn',
   },
-];
+]
