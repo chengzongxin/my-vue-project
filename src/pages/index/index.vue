@@ -1,68 +1,27 @@
 <template>
   <view class="page">
-    <button @click="update">点击</button>
-    <!-- <Header ref="header" />
-    <Body />
-    <Footer /> -->
-    <!-- <picker
-      mode="multiSelector"
-      @change="onChange"
-      :range="[
-        ['1', '2', '3'],
-        ['4', '5', '6'],
-        ['7', '8', '9'],
-        ['7', '8', '9'],
-        ['7', '8', '9'],
-      ]"
-    >
-      <button>click</button>
-    </picker> -->
-    <PickerView @change="onChange" />
+    <Header />
+    <Tab />
+    <List />
+    <Feed />
   </view>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Header from './component/header.vue'
-import Body from './component/body.vue'
-import Footer from './component/footer.vue'
-import PickerView from './component/picker-view.vue'
+import Tab from './component/tab.vue'
+import List from './component/list.vue'
 
 @Component({
-  components: {
-    Header,
-    Body,
-    Footer,
-    PickerView,
-  },
+  components: { Header, Tab, List },
 })
-export default class Index extends Vue {
-  public $refs!: Vue['$refs'] & {
-    header:
-      | {
-          $data: any
-        }
-      | any
-  }
-
-  mounted() {
-    this.update()
-  }
-  onShow() {}
-  update() {
-    // this.$refs.header.init()
-    // console.log('this.$refs.header', this.$refs.header.$data.title)
-    // console.log('this.$refs.header', this.$refs.header.$data.title2)
-    // console.log('this.$refs.header', this.$refs.header.$data.title3)
-    // console.log('this.$refs.header', this.$refs.header)
-  }
-  onChange(e: any) {
-    console.log('onChange', e.detail.__args__[0])
-  }
-}
+export default class Index extends Vue {}
 </script>
 
 <style lang="less" scoped>
 .page {
+  // background-color: #000;
+  background-image: linear-gradient(0deg, #0c1b33 0%, #11244b 53%, #1f0a29 100%);
 }
 </style>
