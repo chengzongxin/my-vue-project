@@ -23,7 +23,7 @@
       </view>
       <view class="result">
         <view class="wrap">
-          <AnimateCompare style="width: 100%; height: 100%" />
+          <AnimateCompare style="width: 100%; height: 100%" :before="before" :after="after" />
         </view>
         <view class="tip-txt">生成结果示范</view>
       </view>
@@ -47,6 +47,9 @@ import AnimateCompare from './animate-compare.vue'
 export default class Header extends Vue {
   [x: string]: any
   actionType: ActionType = ActionType.Upload
+  imgW = 171
+  before: string = 'https://img.yzcdn.cn/vant/cat.jpeg'
+  after: string = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
   created() {}
   mounted() {}
   updated() {}

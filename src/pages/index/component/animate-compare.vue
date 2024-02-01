@@ -2,23 +2,42 @@
   <view class="content">
     <view class="animate-box ani">
       <view class="imgbox before">
-        <image :src="before" class="image" mode="scaleToFill" />
+        <image :src="before" class="image" :style="'width: ' + 2 * imgW + 'rpx;'" mode="scaleToFill" />
       </view>
       <view class="imgbox after">
-        <image :src="after" class="image" mode="scaleToFill" />
+        <image :src="after" class="image" :style="'width: 100%'" mode="scaleToFill" />
       </view>
     </view>
   </view>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component({
   components: {},
 })
 export default class AnimateCompare extends Vue {
-  before: string = 'https://img.yzcdn.cn/vant/cat.jpeg'
-  after: string = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
+  @Prop(String) readonly imageWidth!: number
+  @Prop(String) readonly before!: string
+  @Prop(String) readonly after!: string
+
+  imgW = 0
+
+  mounted() {
+    this.imgW = 170
+    console.log(this.imageWidth)
+
+    this.$nextTick(() => {
+      uni
+        .createSelectorQuery()
+        .in(this)
+        .selectAll('.after')
+        .boundingClientRect((rect: any) => {
+          if (rect) this.imgW = rect.width
+        })
+        .exec()
+    })
+  }
 }
 </script>
 
@@ -38,8 +57,6 @@ export default class AnimateCompare extends Vue {
       bottom: 0;
       overflow: hidden;
       .image {
-        // width: 100%;
-        width: 171px;
         height: 100%;
         position: absolute;
         left: 0;

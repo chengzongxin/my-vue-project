@@ -1,7 +1,7 @@
 <template>
   <view class="content sticky">
     <scroll-view class="scroll-view_H" scroll-x>
-      <block v-for="item in tabs">
+      <block v-for="(item, index) in tabs" :key="index">
         <view class="tab-item">
           <text class="tab-item-content">{{ item }}</text>
         </view>
