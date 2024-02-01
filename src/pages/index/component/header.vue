@@ -13,15 +13,15 @@
     <view class="main">
       <view class="upload">
         <view class="wrap">
-          <view v-if="actionType === 1">
-            <view class="action-upload" @click="$emit('upload')">
+          <view v-if="actionType === 1" class="action-upload" @click="$emit('upload')">
+            <view class="a-u-content">
               <image
                 class="a-u-img"
-                src="https://pic.to8to.com/te/osf/cbf62769a8714964a25c7135d6b0c186.png"
+                src="https://pic.to8to.com/te/osf/f149602c75504ca5907da212f214a2d9.png"
                 mode="scaleToFill"
               />
-              <view>上传一张照片</view>
-              <view>生成Ta的家</view>
+              <view class="a-u-txt">上传一张照片</view>
+              <view class="a-u-txt">生成Ta的家</view>
             </view>
           </view>
           <view v-if="actionType === 2">点击上传 你心目中Ta的照片</view>
@@ -100,8 +100,8 @@ export default class Header extends Vue {
 
     .close {
       position: absolute;
-      width: 48rpx;
-      height: 48rpx;
+      width: 32rpx;
+      height: 32rpx;
       top: 20rpx;
       right: 20rpx;
     }
@@ -133,31 +133,49 @@ export default class Header extends Vue {
         display: flex;
         justify-content: center;
         align-items: center;
+
+        .action-upload {
+          width: 100%;
+          height: 100%;
+          border-radius: 40rpx;
+          padding: 4rpx;
+          background-image: linear-gradient(180deg, #ff7e65 0%, #ff6bb3 100%);
+          .a-u-content {
+            width: 100%;
+            height: 100%;
+            border-radius: 40rpx;
+            background-color: #1e0748;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            .a-u-img {
+              width: 160rpx;
+              height: 160rpx;
+            }
+            .a-u-txt {
+              font-family: MiSans-Medium;
+              font-size: 28rpx;
+              color: #ffffff;
+              letter-spacing: 0;
+              text-align: center;
+              font-weight: 500;
+            }
+          }
+        }
       }
     }
   }
 }
 
-.action-upload {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  .a-u-img {
-    width: 160rpx;
-    height: 160rpx;
-  }
-}
-
 .tip-txt {
-  font-family: Alibaba PuHuiTi 2;
-  font-size: 12px;
-  font-weight: normal;
-  line-height: 21px;
+  font-family: MiSans-Regular;
+  font-size: 24rpx;
+  color: #8a8897;
+  letter-spacing: 0;
   text-align: center;
-  letter-spacing: -0.3px;
-  font-feature-settings: 'kern' on;
-  // color: #3b3b3b;
-  color: #b8b8b8;
+  font-weight: 400;
   display: block;
   margin-top: 28rpx;
 }

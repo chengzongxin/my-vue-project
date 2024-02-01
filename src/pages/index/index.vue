@@ -47,9 +47,7 @@ export default class Index extends Vue {
 
 <style lang="less" scoped>
 .page {
-  // background-color: #000;
-  background-image: linear-gradient(0deg, #0c1b33 0%, #11244b 53%, #1f0a29 100%);
   position: relative;
-  min-height: 100vh;
+  background-image: linear-gradient(0deg, #261033 0%, #1e0748 55%, #1f062a 100%);
 }
 </style>
