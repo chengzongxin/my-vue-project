@@ -22,7 +22,9 @@
         <view class="tip-txt">上传一张照片，生成Ta的家</view>
       </view>
       <view class="result">
-        <view class="wrap"></view>
+        <view class="wrap">
+          <AnimateCompare style="width: 100%; height: 100%" />
+        </view>
         <view class="tip-txt">生成结果示范</view>
       </view>
     </view>
@@ -38,7 +40,10 @@ enum ActionType {
 }
 
 import { Component, Vue } from 'vue-property-decorator'
-@Component({})
+import AnimateCompare from './animate-compare.vue'
+@Component({
+  components: { AnimateCompare },
+})
 export default class Header extends Vue {
   [x: string]: any
   actionType: ActionType = ActionType.Upload
