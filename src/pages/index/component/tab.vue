@@ -42,8 +42,9 @@ export default class Tab extends Vue {
 <style lang="less" scoped>
 .content {
   // background: linear-gradient(90deg, #0d1e3a -3%, #10254f 50%, #0d1e39 103%, rgba(0, 0, 0, 0.9979) 103%);
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 48px 48px 0px 0px;
+  // background: rgba(0, 0, 0, 0.25);
+  background-color: #180730;
+  border-radius: 48rpx 48rpx 0rpx 0rpx;
   padding: 20rpx 17rpx;
   z-index: 999;
   // display: flex;
@@ -77,6 +78,7 @@ export default class Tab extends Vue {
 }
 .sticky {
   position: sticky;
+  position: -webkit-sticky;
   top: 0;
 }
 </style>

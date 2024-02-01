@@ -1,13 +1,15 @@
 <template>
   <view class="page">
-    <!-- <scroll-view scroll-y scroll="onScroll"> -->
-    <Header @upload="showUploadTips = true" />
-    <Tab />
-    <List />
-    <Feed />
-    <UploadTips v-if="showUploadTips" @close="showUploadTips = false" @upload="onUploadBtnClick" />
-    <UploadSheet v-if="showUploadSheet" @cancel="showUploadSheet = false" @photo="photo" @camera="camera" />
-    <!-- </scroll-view> -->
+    <scroll-view class="scroll-view" scroll-y @scroll="onScroll">
+      <view>
+        <Header @upload="showUploadTips = true" ref="header" />
+        <Tab />
+        <List />
+        <Feed />
+        <UploadTips v-if="showUploadTips" @close="showUploadTips = false" @upload="onUploadBtnClick" />
+        <UploadSheet v-if="showUploadSheet" @cancel="showUploadSheet = false" @photo="photo" @camera="camera" />
+      </view>
+    </scroll-view>
   </view>
 </template>
 
@@ -37,10 +39,12 @@ export default class Index extends Vue {
 
   photo() {
     console.log('photo')
+    const header: any = this.$refs.header
   }
 
   camera() {
     console.log('camera')
+    const header: any = this.$refs.header
   }
 }
 </script>
@@ -49,5 +53,10 @@ export default class Index extends Vue {
 .page {
   position: relative;
   background-image: linear-gradient(0deg, #261033 0%, #1e0748 55%, #1f062a 100%);
+  .scroll-view {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+  }
 }
 </style>

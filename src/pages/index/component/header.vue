@@ -72,6 +72,8 @@ export default class Header extends Vue {
   onCloseTips() {
     this.showTip = false
   }
+
+  onUpload() {}
 }
 </script>
 
