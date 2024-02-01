@@ -24,13 +24,24 @@
               <view class="a-u-txt">生成Ta的家</view>
             </view>
           </view>
-          <view v-if="actionType === 2">点击上传 你心目中Ta的照片</view>
-          <view v-if="actionType === 3">
-            <view class="action-failed">点击重新上传</view>
+          <view v-if="actionType === 2" class="action-audit">
+            <image class="action-audit-img" :src="chooseImg" mode="scaleToFill" />
+            <view class="action-audit-mask">
+              <view class="action-audit-mask-ani"></view>
+            </view>
           </view>
-          <view v-if="actionType === 4">点击上传 你心目中Ta的照片</view>
+          <view v-if="actionType === 3" class="action-failed">
+            <image class="action-failed-img" :src="chooseImg" mode="scaleToFill" />
+            <view class="action-failed-mask">
+              <view class="action-failed-mask-icon"></view>
+              <view class="action-failed-mask-txt">点击重新上传</view>
+            </view>
+          </view>
+          <view v-if="actionType === 4" class="action-suc">
+            <image class="action-suc-img" :src="chooseImg" mode="scaleToFill" />
+          </view>
         </view>
-        <view class="tip-txt">上传一张照片，生成Ta的家</view>
+        <view class="tip-txt" :style="{ color: actionType === 3 ? '#FD6343;' : '#8A8897;' }">{{ uploadTxt }}</view>
       </view>
       <view class="result">
         <view class="wrap">
@@ -63,6 +74,29 @@ export default class Header extends Vue {
   after: string = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
 
   showTip = true
+  chooseImg = ''
+
+  get uploadTxt() {
+    let uploadTxt = ''
+    switch (this.actionType) {
+      case ActionType.Upload:
+        uploadTxt = '上传一张照片，生成Ta的家'
+        break
+      case ActionType.Auditing:
+        uploadTxt = '审核中，请稍等片刻'
+        break
+      case ActionType.UploadFailed:
+        uploadTxt = '未识别到人脸，请重新上传'
+        break
+      case ActionType.UploadSuccess:
+        uploadTxt = '上传成功'
+        break
+
+      default:
+        break
+    }
+    return uploadTxt
+  }
 
   created() {}
   mounted() {}
@@ -73,7 +107,10 @@ export default class Header extends Vue {
     this.showTip = false
   }
 
-  onUpload() {}
+  onUpload(img: string) {
+    this.chooseImg = img
+    this.actionType = ActionType.Auditing
+  }
 }
 </script>
 
@@ -136,6 +173,7 @@ export default class Header extends Vue {
         justify-content: center;
         align-items: center;
 
+        // 等待上传
         .action-upload {
           width: 100%;
           height: 100%;
@@ -164,6 +202,105 @@ export default class Header extends Vue {
               text-align: center;
               font-weight: 500;
             }
+          }
+        }
+
+        // 审核中
+        .action-audit {
+          width: 100%;
+          height: 100%;
+          border-radius: 40rpx;
+          overflow: hidden;
+          position: relative;
+          &-img {
+            width: 100%;
+            height: 100%;
+          }
+          &-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            @keyframes rotate {
+              from {
+                -webkit-transform: rotate(0deg);
+                transform: rotate(0deg);
+              }
+              to {
+                -webkit-transform: rotate(360deg);
+                transform: rotate(360deg);
+              }
+            }
+
+            &-ani {
+              width: 32rpx;
+              height: 32rpx;
+              background: url('https://pic.to8to.com/te/osf/3c41e3906085430a8347e61beeffdf0d.png') no-repeat;
+              background-size: contain;
+              animation: rotate 1s linear infinite;
+              vertical-align: middle;
+            }
+          }
+        }
+
+        // 审核失败
+        .action-failed {
+          width: 100%;
+          height: 100%;
+          border-radius: 40rpx;
+          overflow: hidden;
+          position: relative;
+          &-img {
+            width: 100%;
+            height: 100%;
+          }
+          &-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            &-icon {
+              width: 32rpx;
+              height: 32rpx;
+              background: url('https://pic.to8to.com/te/osf/3c41e3906085430a8347e61beeffdf0d.png') no-repeat;
+              background-size: contain;
+              vertical-align: middle;
+            }
+            &-txt {
+              margin-top: 20rpx;
+              font-family: MiSans-Medium;
+              font-size: 28rpx;
+              color: #ffffff;
+              letter-spacing: 0;
+              text-align: center;
+              font-weight: 500;
+            }
+          }
+        }
+
+        // 上传成功
+        .action-suc {
+          width: 100%;
+          height: 100%;
+          border-radius: 40rpx;
+          overflow: hidden;
+          position: relative;
+          &-img {
+            width: 100%;
+            height: 100%;
           }
         }
       }

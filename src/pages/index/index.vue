@@ -28,6 +28,12 @@ export default class Index extends Vue {
   showUploadTips = false
   showUploadSheet = false
 
+  chooseImg = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
+
+  mounted() {
+    this.photo()
+  }
+
   onUploadBtnClick() {
     this.showUploadTips = false
     this.showUploadSheet = true
@@ -40,6 +46,7 @@ export default class Index extends Vue {
   photo() {
     console.log('photo')
     const header: any = this.$refs.header
+    header.onUpload(this.chooseImg)
   }
 
   camera() {
