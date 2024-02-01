@@ -6,7 +6,7 @@
     <List />
     <Feed />
     <UploadTips v-if="showUploadTips" @close="showUploadTips = false" @upload="onUploadBtnClick" />
-    <UploadSheet v-if="showUploadSheet" />
+    <UploadSheet v-if="showUploadSheet" @cancel="showUploadSheet = false" @photo="photo" @camera="camera" />
     <!-- </scroll-view> -->
   </view>
 </template>
@@ -24,7 +24,7 @@ import UploadSheet from './component/upload-sheet.vue'
 })
 export default class Index extends Vue {
   showUploadTips = false
-  showUploadSheet = false
+  showUploadSheet = true
 
   onUploadBtnClick() {
     this.showUploadTips = false
@@ -33,6 +33,14 @@ export default class Index extends Vue {
 
   onScroll(e: any) {
     console.log('onScroll:', e)
+  }
+
+  photo() {
+    console.log('photo')
+  }
+
+  camera() {
+    console.log('camera')
   }
 }
 </script>
