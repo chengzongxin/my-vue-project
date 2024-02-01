@@ -4,6 +4,7 @@
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": ""
+        // "navigationBarBackgroundColor": "#00000000"
         // "navigationStyle": "custom"
       }
     }

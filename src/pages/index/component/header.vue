@@ -1,8 +1,15 @@
 <template>
   <view class="content">
-    <text class="title">
+    <view style="height: 40rpx"></view>
+    <view class="title" v-if="showTip">
       都说看物品就能推断出主人的性格，Ta的家，又将由什么性格统治呢？让我们一起揭晓格式气质魅力的Ta，适合怎样的家居搭配
-    </text>
+      <image
+        class="close"
+        @click="onCloseTips"
+        src="https://pic.to8to.com/te/osf/b1eaa52e97fc40e384d8f899cf7eb424.png"
+        mode="scaleToFill"
+      />
+    </view>
     <view class="main">
       <view class="upload">
         <view class="wrap">
@@ -54,29 +61,50 @@ export default class Header extends Vue {
   imgW = 171
   before: string = 'https://img.yzcdn.cn/vant/cat.jpeg'
   after: string = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
+
+  showTip = true
+
   created() {}
   mounted() {}
   updated() {}
   destroyed() {}
   init() {}
+  onCloseTips() {
+    this.showTip = false
+  }
 }
 </script>
 
 <style lang="less" scoped>
 .content {
   margin-bottom: 25rpx;
+  position: relative;
   .title {
-    font-family: Alibaba PuHuiTi 2;
-    font-size: 12px;
-    font-weight: normal;
-    line-height: 21px;
-    letter-spacing: -0.3px;
-    font-feature-settings: 'kern' on;
-    // color: #3b3b3b;
-    color: #c7c7c7;
+    position: relative;
+    font-family: MiSans-Regular;
+    font-size: 26rpx;
+    color: #8a8897;
+    letter-spacing: 0;
+    text-align: justify;
+    font-weight: 400;
 
     display: block;
-    padding: 28rpx 44rpx 0rpx 44rpx;
+
+    padding: 32rpx;
+    padding-right: 76rpx;
+    margin: 32rpx;
+
+    background: rgba(0, 0, 0, 0.1);
+    border: 1rpx solid rgba(132, 130, 146, 1);
+    border-radius: 32rpx;
+
+    .close {
+      position: absolute;
+      width: 48rpx;
+      height: 48rpx;
+      top: 20rpx;
+      right: 20rpx;
+    }
   }
 
   .main {

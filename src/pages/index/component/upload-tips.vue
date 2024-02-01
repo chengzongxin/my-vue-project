@@ -7,9 +7,9 @@
       src="https://pic.to8to.com/te/osf/b1eaa52e97fc40e384d8f899cf7eb424.png"
       mode="scaleToFill"
     />
-    <image class="img" src="https://pic.to8to.com/te/osf/12e10b1d163f45529bfcd746ccc0fc73.png" mode="widthFix" />
+    <image class="img" src="https://pic.to8to.com/te/osf/12e10b1d163f45529bfcd746ccc0fc73.png" mode="aspectFill" />
     <view style="height: 20rpx"></view>
-    <image class="img" src="https://pic.to8to.com/te/osf/bffdae4340ac48a1b5ae26d34a82f003.png" mode="widthFix" />
+    <image class="img" src="https://pic.to8to.com/te/osf/bffdae4340ac48a1b5ae26d34a82f003.png" mode="aspectFill" />
     <text class="tips">您将上传照片使用AIGC服务，请确保您已获得权利人的同意，除本服务外，不得用于其他用途。</text>
     <button class="btn" @click="$emit('upload')">上传图片</button>
   </view>
@@ -78,6 +78,8 @@ export default class UploadTips extends Vue {
   .img {
     border-radius: 48rpx;
     overflow: hidden;
+    width: 686rpx;
+    height: 396rpx;
   }
   .tips {
     display: block;

@@ -24,7 +24,7 @@ import UploadSheet from './component/upload-sheet.vue'
 })
 export default class Index extends Vue {
   showUploadTips = false
-  showUploadSheet = true
+  showUploadSheet = false
 
   onUploadBtnClick() {
     this.showUploadTips = false
@@ -50,5 +50,6 @@ export default class Index extends Vue {
   // background-color: #000;
   background-image: linear-gradient(0deg, #0c1b33 0%, #11244b 53%, #1f0a29 100%);
   position: relative;
+  min-height: 100vh;
 }
 </style>
