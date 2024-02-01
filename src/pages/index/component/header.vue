@@ -7,10 +7,14 @@
       <view class="upload">
         <view class="wrap">
           <view v-if="actionType === 1">
-            <view class="action-upload">
-              点击上传
-              <br />
-              你心目中Ta的照片
+            <view class="action-upload" @click="$emit('upload')">
+              <image
+                class="a-u-img"
+                src="https://pic.to8to.com/te/osf/cbf62769a8714964a25c7135d6b0c186.png"
+                mode="scaleToFill"
+              />
+              <view>上传一张照片</view>
+              <view>生成Ta的家</view>
             </view>
           </view>
           <view v-if="actionType === 2">点击上传 你心目中Ta的照片</view>
@@ -103,6 +107,16 @@ export default class Header extends Vue {
         align-items: center;
       }
     }
+  }
+}
+
+.action-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .a-u-img {
+    width: 160rpx;
+    height: 160rpx;
   }
 }
 

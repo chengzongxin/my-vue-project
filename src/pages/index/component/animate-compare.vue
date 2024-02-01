@@ -17,23 +17,19 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
   components: {},
 })
 export default class AnimateCompare extends Vue {
-  @Prop(String) readonly imageWidth!: number
   @Prop(String) readonly before!: string
   @Prop(String) readonly after!: string
 
   imgW = 0
 
   mounted() {
-    this.imgW = 170
-    console.log(this.imageWidth)
-
     this.$nextTick(() => {
       uni
         .createSelectorQuery()
         .in(this)
         .selectAll('.after')
         .boundingClientRect((rect: any) => {
-          if (rect) this.imgW = rect.width
+          if (rect) this.imgW = rect[0].width
         })
         .exec()
     })

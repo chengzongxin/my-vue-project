@@ -1,10 +1,12 @@
 <template>
   <view class="page">
     <!-- <scroll-view scroll-y scroll="onScroll"> -->
-    <Header />
+    <Header @upload="showUploadTips = true" />
     <Tab />
     <List />
     <Feed />
+    <UploadTips v-if="showUploadTips" @close="showUploadTips = false" @upload="onUploadBtnClick" />
+    <UploadSheet v-if="showUploadSheet" />
     <!-- </scroll-view> -->
   </view>
 </template>
@@ -14,11 +16,21 @@ import { Component, Vue } from 'vue-property-decorator'
 import Header from './component/header.vue'
 import Tab from './component/tab.vue'
 import List from './component/list.vue'
+import UploadTips from './component/upload-tips.vue'
+import UploadSheet from './component/upload-sheet.vue'
 
 @Component({
-  components: { Header, Tab, List },
+  components: { Header, Tab, List, UploadTips, UploadSheet },
 })
 export default class Index extends Vue {
+  showUploadTips = false
+  showUploadSheet = false
+
+  onUploadBtnClick() {
+    this.showUploadTips = false
+    this.showUploadSheet = true
+  }
+
   onScroll(e: any) {
     console.log('onScroll:', e)
   }
