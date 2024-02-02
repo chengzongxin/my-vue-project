@@ -20,7 +20,7 @@ export default class AnimateCompare extends Vue {
   @Prop(String) readonly before!: string
   @Prop(String) readonly after!: string
   @Prop({ type: Boolean, default: true }) readonly play!: boolean
-  imgW = 0
+  imgW = 167
 
   mounted() {
     this.$nextTick(() => {
@@ -29,7 +29,7 @@ export default class AnimateCompare extends Vue {
         .in(this)
         .selectAll('.after')
         .boundingClientRect((rect: any) => {
-          if (rect) this.imgW = rect[0].width
+          if (rect[0].width) this.imgW = rect[0].width
         })
         .exec()
     })
