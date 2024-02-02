@@ -23,6 +23,7 @@
       v-show="showFloatHeader"
       @close="showFloatHeader = false"
     />
+    <FloatTab />
   </view>
 </template>
 
@@ -34,9 +35,10 @@ import List from './component/list.vue'
 import UploadTips from './component/upload-tips.vue'
 import UploadSheet from './component/upload-sheet.vue'
 import FloatHeader from './component/float-header.vue'
+import FloatTab from './component/float-tab.vue'
 
 @Component({
-  components: { Header, Tab, List, UploadTips, UploadSheet, FloatHeader },
+  components: { Header, Tab, List, UploadTips, UploadSheet, FloatHeader, FloatTab },
 })
 export default class Index extends Vue {
   showUploadTips = false

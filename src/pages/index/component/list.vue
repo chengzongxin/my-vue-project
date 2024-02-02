@@ -122,7 +122,7 @@ export default class List extends Vue {
         position: absolute;
         bottom: 20;
         right: 20;
-        z-index: 88;
+        z-index: 3;
         font-family: Arial;
         font-size: 24rpx;
         font-weight: normal;
