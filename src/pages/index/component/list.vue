@@ -8,7 +8,7 @@
             src="https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png"
             mode="scaleToFill"
           />
-          <text class="l-txt">@女神9527</text>
+          <!-- <text class="l-txt">@女神9527</text> -->
           <text class="r-txt">12.5万</text>
         </view>
       </view>
@@ -59,6 +59,7 @@ export default class List extends Vue {
       }
       .l-txt,
       .r-txt {
+        display: block;
         position: absolute;
         font-family: Arial;
         font-size: 24rpx;
@@ -69,6 +70,20 @@ export default class List extends Vue {
         text-shadow: 0rpx 8rpx 20rpx rgba(0, 0, 0, 0.3);
 
         bottom: 11rpx;
+        padding-left: 44rpx;
+        &::before {
+          position: absolute;
+          display: block;
+          width: 32rpx;
+          height: 32rpx;
+          content: '';
+          top: 50%;
+          transform: translateY(-50%);
+          left: 0;
+          background-image: url('https://pic.to8to.com/te/osf/c325a23a7b8d4b50b1d52dddc95e0e73.png');
+          background-repeat: no-repeat;
+          background-size: contain;
+        }
       }
       .l-txt {
         left: 14rpx;

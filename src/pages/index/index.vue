@@ -31,7 +31,7 @@ export default class Index extends Vue {
   chooseImg = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
 
   mounted() {
-    this.photo()
+    // this.photo()
   }
 
   onUploadBtnClick() {

@@ -50,6 +50,9 @@
         <view class="tip-txt">生成结果示范</view>
       </view>
     </view>
+    <button class="btn" :class="{ disabled: btnDisable }" v-if="btnShow" @click="onClickBtn" :disabled="btnDisable">
+      生成Ta的家
+    </button>
   </view>
 </template>
 
@@ -98,6 +101,14 @@ export default class Header extends Vue {
     return uploadTxt
   }
 
+  get btnDisable() {
+    return this.actionType !== ActionType.UploadSuccess
+  }
+
+  get btnShow() {
+    return this.actionType !== ActionType.Upload
+  }
+
   created() {}
   mounted() {}
   updated() {}
@@ -109,14 +120,18 @@ export default class Header extends Vue {
 
   onUpload(img: string) {
     this.chooseImg = img
-    this.actionType = ActionType.Auditing
+    this.actionType = ActionType.UploadFailed
+  }
+
+  onClickBtn() {
+    console.log('onlickbtn')
   }
 }
 </script>
 
 <style lang="less" scoped>
 .content {
-  margin-bottom: 25rpx;
+  margin-bottom: 60rpx;
   position: relative;
   .title {
     position: relative;
@@ -240,9 +255,9 @@ export default class Header extends Vue {
             }
 
             &-ani {
-              width: 32rpx;
-              height: 32rpx;
-              background: url('https://pic.to8to.com/te/osf/3c41e3906085430a8347e61beeffdf0d.png') no-repeat;
+              width: 64rpx;
+              height: 64rpx;
+              background: url('https://pic.to8to.com/te/osf/af2aa5b4864a4147bf0eabb516b3d66c.png') no-repeat;
               background-size: contain;
               animation: rotate 1s linear infinite;
               vertical-align: middle;
@@ -273,9 +288,9 @@ export default class Header extends Vue {
             align-items: center;
             justify-content: center;
             &-icon {
-              width: 32rpx;
-              height: 32rpx;
-              background: url('https://pic.to8to.com/te/osf/3c41e3906085430a8347e61beeffdf0d.png') no-repeat;
+              width: 64rpx;
+              height: 64rpx;
+              background: url('https://pic.to8to.com/te/osf/1386bfb03db44e3a98c5d6e33cc450e5.png') no-repeat;
               background-size: contain;
               vertical-align: middle;
             }
@@ -305,6 +320,23 @@ export default class Header extends Vue {
         }
       }
     }
+  }
+
+  .btn {
+    margin: 40rpx;
+    margin-bottom: 0rpx;
+    background-image: linear-gradient(270deg, #fe46a0 4%, #ff5b3b 100%);
+    box-shadow: 0rpx 10rpx 30rpx 0rpx rgba(255, 74, 145, 0.3);
+    border-radius: 64rpx;
+    font-family: MiSans-Medium;
+    font-size: 32rpx;
+    color: #ffffff;
+    letter-spacing: 0;
+    text-align: center;
+    font-weight: 500;
+  }
+  .disabled {
+    opacity: 0.5;
   }
 }
 
