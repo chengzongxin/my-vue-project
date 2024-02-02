@@ -3,13 +3,20 @@
     <scroll-view class="scroll-view" scroll-y @scroll="onScroll">
       <view>
         <Header @upload="showUploadTips = true" ref="header" />
-        <Tab />
+        <Tab class="tab" />
         <List />
         <Feed />
         <UploadTips v-if="showUploadTips" @close="showUploadTips = false" @upload="onUploadBtnClick" />
         <UploadSheet v-if="showUploadSheet" @cancel="showUploadSheet = false" @photo="photo" @camera="camera" />
       </view>
     </scroll-view>
+    <button class="float-btn" plain v-if="isScrollToTop" @click="onClickFloatBtn">
+      <image
+        class="float-btn-icon"
+        src="https://pic.to8to.com/te/osf/af519eb5413a43d3af5f6565a069ac9d.png"
+        mode="scaleToFill"
+      />
+    </button>
   </view>
 </template>
 
@@ -27,6 +34,7 @@ import UploadSheet from './component/upload-sheet.vue'
 export default class Index extends Vue {
   showUploadTips = false
   showUploadSheet = false
+  isScrollToTop = false
 
   chooseImg = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
 
@@ -40,7 +48,16 @@ export default class Index extends Vue {
   }
 
   onScroll(e: any) {
-    console.log('onScroll:', e)
+    // console.log('onScroll:', e)
+    uni
+      .createSelectorQuery()
+      .in(this)
+      .select('.tab')
+      .boundingClientRect((rect: any) => {
+        // console.log(rect)
+        this.isScrollToTop = rect.top <= 0
+      })
+      .exec()
   }
 
   photo() {
@@ -53,6 +70,10 @@ export default class Index extends Vue {
     console.log('camera')
     const header: any = this.$refs.header
   }
+
+  onClickFloatBtn() {
+    console.log('onClickFLoatBtn')
+  }
 }
 </script>
 
@@ -64,6 +85,18 @@ export default class Index extends Vue {
     height: 100vh;
     width: 100%;
     position: relative;
+  }
+  .float-btn {
+    position: absolute;
+    bottom: 232rpx;
+    right: 40rpx;
+    z-index: 1001;
+    background-color: transparent;
+    border: none;
+    &-icon {
+      width: 120rpx;
+      height: 120rpx;
+    }
   }
 }
 </style>
