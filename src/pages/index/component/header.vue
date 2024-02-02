@@ -123,6 +123,10 @@ export default class Header extends Vue {
 
   onUpload(img: string) {
     this.chooseImg = img
+    if (this.actionType == ActionType.UploadFailed) {
+      this.actionType = ActionType.UploadSuccess
+      return
+    }
     this.actionType = ActionType.UploadFailed
   }
 

@@ -4,7 +4,7 @@
       <view>
         <Header @upload="showUploadTips = true" ref="header" />
         <Tab class="tab" />
-        <List />
+        <List ref="list" />
         <Feed />
         <UploadTips v-if="showUploadTips" @close="showUploadTips = false" @upload="onUploadBtnClick" />
         <UploadSheet v-if="showUploadSheet" @cancel="showUploadSheet = false" @photo="photo" @camera="camera" />
@@ -62,7 +62,8 @@ export default class Index extends Vue {
   }
 
   onScroll(e: any) {
-    // console.log('onScroll:', e)
+    const list: any = this.$refs.list
+    list.scroll(e)
     uni
       .createSelectorQuery()
       .in(this)

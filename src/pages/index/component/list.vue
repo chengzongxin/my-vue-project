@@ -1,12 +1,18 @@
 <template>
   <view class="content">
     <view class="wrap">
-      <view v-for="item in list">
+      <view class="list-item" v-for="(item, index) in list">
         <view class="card">
-          <image
-            class="img"
-            src="https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png"
-            mode="scaleToFill"
+          <!-- <image
+              class="img"
+              src="https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png"
+              mode="scaleToFill"
+            /> -->
+          <AnimateCompare
+            style="width: 100%; height: 100%"
+            :before="before"
+            :after="after"
+            :play="aniIndex.find((i) => i === index) === index"
           />
           <!-- <text class="l-txt">@女神9527</text> -->
           <text class="r-txt">12.5万</text>
@@ -18,16 +24,69 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-@Component({})
+import AnimateCompare from './animate-compare.vue'
+@Component({
+  components: { AnimateCompare },
+})
 export default class List extends Vue {
   list: any[] = []
+  itemTop: any = null
+  aniIndex: number[] = [0, 1]
+  navBarInfo = {
+    navBarHeight: 86,
+    navBarRight: 7,
+    navBarTop: 48,
+    navCapsuleHeight: 32,
+    navCapsuleWidth: 101,
+  }
+  before: string = 'https://img.yzcdn.cn/vant/cat.jpeg'
+  after: string = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
+
+  oobserver: any = null
+  timeout: number = 0
 
   mounted() {
     this.list = [
       1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2,
       3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2,
     ]
-    console.log(this.list)
+
+    setTimeout(() => {
+      uni
+        .createSelectorQuery()
+        .in(this)
+        .selectAll('.list-item')
+        .boundingClientRect((rect: any) => {
+          if (rect) this.itemTop = rect
+        })
+        .exec()
+    }, 1000)
+  }
+
+  scroll(e: any) {
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => {
+      this.scrollend(e)
+    }, 200)
+  }
+
+  // 滚动结束
+  scrollend(e: any) {
+    if (this.itemTop) {
+      const { scrollTop } = e.detail
+      const screenH = uni.getSystemInfoSync().windowHeight
+      for (let i = 0; i < this.itemTop.length; i++) {
+        const { top, height } = this.itemTop[i]
+        const contain = scrollTop < top && scrollTop + screenH > top + height
+        if (contain) {
+          if (this.aniIndex.indexOf(i) === -1) {
+            this.aniIndex.push(i)
+          }
+        } else {
+          this.aniIndex = this.aniIndex.filter((item) => item !== i)
+        }
+      }
+    }
   }
 }
 </script>
@@ -61,6 +120,9 @@ export default class List extends Vue {
       .r-txt {
         display: block;
         position: absolute;
+        bottom: 20;
+        right: 20;
+        z-index: 88;
         font-family: Arial;
         font-size: 24rpx;
         font-weight: normal;

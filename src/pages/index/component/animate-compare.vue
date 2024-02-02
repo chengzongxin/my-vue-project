@@ -1,6 +1,6 @@
 <template>
   <view class="content">
-    <view class="animate-box ani">
+    <view class="animate-box" :class="{ ani: play }">
       <view class="imgbox before">
         <image :src="before" class="image" :style="'width: ' + 2 * imgW + 'rpx;'" mode="scaleToFill" />
       </view>
@@ -19,7 +19,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class AnimateCompare extends Vue {
   @Prop(String) readonly before!: string
   @Prop(String) readonly after!: string
-
+  @Prop({ type: Boolean, default: true }) readonly play!: boolean
   imgW = 0
 
   mounted() {
