@@ -1,6 +1,12 @@
 <template>
   <view class="content" @click="$emit('cancel')" :class="showModal ? 'active' : ''">
     <view class="wrap">
+      <image
+        class="close"
+        @click="$emit('close')"
+        src="https://pic.to8to.com/te/osf/b1eaa52e97fc40e384d8f899cf7eb424.png"
+        mode="scaleToFill"
+      />
       <Header ref="header" @upload="$emit('upload')" />
     </view>
   </view>
@@ -59,6 +65,14 @@ export default class FloatHeader extends Vue {
     background: #1c192e;
     border-radius: 48rpx 48rpx 0rpx 0rpx;
     overflow: hidden;
+    position: relative;
+    .close {
+      position: absolute;
+      width: 48rpx;
+      height: 48rpx;
+      top: 32rpx;
+      right: 32rpx;
+    }
   }
 }
 </style>

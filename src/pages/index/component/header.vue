@@ -30,7 +30,7 @@
               <view class="action-audit-mask-ani"></view>
             </view>
           </view>
-          <view v-if="actionType === 3" class="action-failed">
+          <view v-if="actionType === 3" class="action-failed" @click="$emit('upload')">
             <image class="action-failed-img" :src="chooseImg" mode="scaleToFill" />
             <view class="action-failed-mask">
               <view class="action-failed-mask-icon"></view>
@@ -110,12 +110,15 @@ export default class Header extends Vue {
   }
 
   created() {}
-  mounted() {}
+  mounted() {
+    this.showTip = !uni.getStorageSync('isNotShowTips')
+  }
   updated() {}
   destroyed() {}
   init() {}
   onCloseTips() {
     this.showTip = false
+    uni.setStorageSync('isNotShowTips', 1)
   }
 
   onUpload(img: string) {

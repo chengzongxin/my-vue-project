@@ -17,7 +17,12 @@
         mode="scaleToFill"
       />
     </button>
-    <FloatHeader @upload="showUploadTips = true" ref="floatHeader" v-if="showFloatHeader" />
+    <FloatHeader
+      @upload="showUploadTips = true"
+      ref="floatHeader"
+      v-show="showFloatHeader"
+      @close="showFloatHeader = false"
+    />
   </view>
 </template>
 
@@ -40,6 +45,12 @@ export default class Index extends Vue {
   showFloatHeader = false
 
   chooseImg = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
+
+  headers() {
+    const header: any = this.$refs.header
+    const floatHeader: any = this.$refs.floatHeader
+    return [header, floatHeader]
+  }
 
   mounted() {
     // this.photo()
@@ -65,13 +76,15 @@ export default class Index extends Vue {
 
   photo() {
     console.log('photo')
-    const header: any = this.$refs.header
-    header.onUpload(this.chooseImg)
+    this.headers().forEach((item: any) => {
+      item.onUpload(this.chooseImg)
+    })
   }
 
   camera() {
     console.log('camera')
     const header: any = this.$refs.header
+    const floatHeader: any = this.$refs.floatHeader
   }
 
   onClickFloatBtn() {

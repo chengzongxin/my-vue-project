@@ -1,6 +1,6 @@
 <template>
-  <view class="content" @click="$emit('cancel')" :class="showModal ? 'active' : ''">
-    <view class="wrap">
+  <view class="content" @click="$emit('cancel')">
+    <view class="wrap" :class="showModal ? 'active' : ''">
       <button class="btn b1" @click="$emit('photo')">从手机相册选择</button>
       <button class="btn b1" @click="$emit('camera')">拍摄</button>
       <button class="btn b2" @click="$emit('cancel')">取消</button>
@@ -41,14 +41,6 @@ export default class UploadTips extends Vue {
   align-items: center;
   justify-content: flex-end;
 
-  transition: transform 0.3s;
-
-  transform: translateY(100%);
-
-  &.active {
-    transform: translateY(0%);
-  }
-
   .wrap {
     background: #1c192e;
     width: 100%;
@@ -56,6 +48,14 @@ export default class UploadTips extends Vue {
     background: #1c192e;
     border-radius: 48rpx 48rpx 0rpx 0rpx;
     overflow: hidden;
+
+    transition: transform 0.3s;
+
+    transform: translateY(100%);
+
+    &.active {
+      transform: translateY(0%);
+    }
 
     .btn {
       font-family: MiSans-Regular;
