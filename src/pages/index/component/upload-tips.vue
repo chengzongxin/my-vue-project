@@ -43,7 +43,7 @@ export default class UploadTips extends Vue {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 1003;
 
   display: flex;
   flex-direction: column;

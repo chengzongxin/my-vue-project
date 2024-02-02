@@ -17,6 +17,7 @@
         mode="scaleToFill"
       />
     </button>
+    <FloatHeader @upload="showUploadTips = true" ref="floatHeader" v-if="showFloatHeader" />
   </view>
 </template>
 
@@ -27,14 +28,16 @@ import Tab from './component/tab.vue'
 import List from './component/list.vue'
 import UploadTips from './component/upload-tips.vue'
 import UploadSheet from './component/upload-sheet.vue'
+import FloatHeader from './component/float-header.vue'
 
 @Component({
-  components: { Header, Tab, List, UploadTips, UploadSheet },
+  components: { Header, Tab, List, UploadTips, UploadSheet, FloatHeader },
 })
 export default class Index extends Vue {
   showUploadTips = false
   showUploadSheet = false
   isScrollToTop = false
+  showFloatHeader = false
 
   chooseImg = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
 
@@ -73,6 +76,7 @@ export default class Index extends Vue {
 
   onClickFloatBtn() {
     console.log('onClickFLoatBtn')
+    this.showFloatHeader = true
   }
 }
 </script>
