@@ -1,7 +1,7 @@
 <template>
   <view class="content">
     <view style="height: 40rpx"></view>
-    <view class="title" v-if="showTip">
+    <view class="title" v-if="showTip && isShowTip">
       都说看物品就能推断出主人的性格，Ta的家，又将由什么性格统治呢？让我们一起揭晓格式气质魅力的Ta，适合怎样的家居搭配
       <image
         class="close"
@@ -64,13 +64,16 @@ enum ActionType {
   UploadSuccess = 4,
 }
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import AnimateCompare from './animate-compare.vue'
 @Component({
   components: { AnimateCompare },
 })
 export default class Header extends Vue {
   [x: string]: any
+
+  @Prop({ default: true }) isShowTip!: boolean
+
   actionType: ActionType = ActionType.Upload
   imgW = 171
   before: string = 'https://img.yzcdn.cn/vant/cat.jpeg'
