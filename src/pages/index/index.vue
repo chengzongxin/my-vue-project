@@ -15,10 +15,10 @@
     <!-- 出图 -->
     <view class="pic">
       <view class="pic-1">
-        <image src="/static/logo.png" mode="scaleToFill" />
+        <image class="pic-result" :src="selectHouseImg" mode="scaleToFill" />
       </view>
       <view class="pic-1">
-        <image src="/static/logo.png" mode="scaleToFill" />
+        <image class="pic-result" src="/static/logo.png" mode="scaleToFill" />
       </view>
     </view>
 
@@ -26,13 +26,13 @@
     <view class="tool-bar">
       <view class="left-box">
         <view class="tool-item">
-          <text>设计我家效果</text>
+          <image class="house-img" v-if="selectHouseImg" :src="selectHouseImg" mode="scaleToFill" />
+          <text v-else @click="onClickBuild">设计我家效果</text>
         </view>
       </view>
       <view class="right-box">
         <view class="tool-item">
-          <!-- <image src="/static/logo.png" mode="scaleToFill" /> -->
-          <text>按住说话</text>
+          <text @click="audioInputAction">按住说话</text>
         </view>
         <view class="tool-item">
           <text>快捷修图</text>
@@ -52,8 +52,191 @@ import { Component, Vue } from 'vue-property-decorator'
   components: {},
 })
 export default class Index extends Vue {
+  //   houseImg = 'https://pic.to8to.com/te/osf/1377b11f00f3417fb60cd422f1ab0b73.jpg'
+  houseImg = 'https://pic.to8to.com/te/osf/faf2d7977a1b412db7c39e93e0683a08.jpg'
+
+  selectHouseImg: null | string = null
+
+  audioInputList = [
+    'https://pic.to8to.com/te/osf/4d22ff087c884560849d7c22f2ba0021.m4a',
+    'https://pic.to8to.com/te/osf/a5c911b28058439a916f6b44b13d1137.m4a',
+    'https://pic.to8to.com/te/osf/0b6aaa1d585d42c7a3ba1688aff066af.m4a',
+    'https://backtest-1318194069.cos.ap-guangzhou.myqcloud.com/chunk_dds_1.wav',
+  ]
+
+  audioIndex = 0
+
+  businessId = 0
+
+  sd_params = {
+    batch_size: 4,
+    resize_mode: 0,
+    seed: -1,
+    t8t_method: 'img2img',
+    steps: 30,
+    negative_prompt: 'nsfw,(low quality,normal quality,worst quality,jpeg artifacts)',
+    sampler_name: 'DPM++ 2M SDE Karras',
+    denoising_strength: 0.65,
+    control_nets: [
+      {
+        guidance_end: 0.95,
+        threshold_b: 0.1,
+        resize_mode: 'Crop and Resize',
+        control_mode: 'Balanced',
+        guidance_start: 0,
+        module: 'mlsd',
+        threshold_a: 0.1,
+        input_image: 'https://pic.to8to.com/tc/AiPicture/cd90c78190cb4bcc9b3fe4040ad4f53f.jpg',
+        weight: 1.2,
+        model: 'control_v11p_sd15_mlsd [aca30ff0]',
+        processor_res: 512,
+      },
+    ],
+    width: 682,
+    input_image: 'https://pic.to8to.com/te/shortlink/7a821e418aa544a599651e85b72f596d.jpg',
+    prompt:
+      '(best quality,4k,8k,highres,masterpiece:1.2),ultra-detailed,(realistic,photorealistic:1.37),modern living room design,minimalist furniture,sectional sofa,abstract art pieces,engineered wood floors,smart home gadgets,track lighting,sheer curtains,focal point fireplace,spacious feel,modular shelving,solid color rug,metallic finishes,clean lines,(simplicity,functional design:1.2),(Soft lightColor combinations are usually simple and lively:1.2),<lora:lit:0.3>,blue,lounge sofa.',
+    cfg_scale: 7,
+    height: 512,
+  }
+
   mounted() {
     console.log('mounted')
+    this.imageToAudio()
+  }
+
+  onClickBuild() {
+    this.selectHouseImg = this.houseImg
+    this.onBuild()
+  }
+
+  async onBuild(): Promise<number> {
+    this.sd_params.input_image = this.selectHouseImg as string
+    const res: any = await uni.request({
+      url: 'https://tumaxflashapi.to8to.com/api/sdxcx/sendTask',
+      method: 'POST',
+      data: {
+        use_type: 2,
+        account_id: 24004695,
+        proportion: '',
+        space_name: '客厅',
+        pic_num: 1,
+        sign: '657d92fc768b21d7dbe8c05c7b5fa6d4',
+        source_img_url: this.houseImg,
+        sd_params: this.sd_params,
+        pic_desc: '',
+        pic_type: 0,
+        style_name: '现代',
+      },
+    })
+    console.log('res', res, typeof res)
+    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+      //   this.askList = res.data
+      console.log(res)
+      return res.data.task_id
+    } else {
+      return 0
+    }
+  }
+
+  async fetchTaskResult(taskId: number): Promise<string | null> {
+    const res: any = await uni.request({
+      url: 'https://chat-api.to8to.com:6443/audio/audioSelfToText',
+      method: 'POST',
+      data: {
+        businessKey: 'aipk',
+        businessId: '1',
+        audioUrl: this.audioInputList[this.audioIndex],
+      },
+    })
+    console.log('res', res, typeof res)
+    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+      console.log(res)
+      return res.data
+    } else {
+      return null
+    }
+  }
+
+  async audioInputAction() {
+    const audioText = await this.audioToText()
+    const businessId = await this.fetchKeyword(audioText)
+    const keyword = await this.fetchKeywordResult(businessId)
+    this.audioIndex++
+    this.sd_params.prompt += keyword
+    const taskId = await this.onBuild()
+    const img = this.fetchTaskResult(taskId) as unknown as string
+    this.selectHouseImg = img
+  }
+
+  async audioToText(): Promise<string> {
+    const res: any = await uni.request({
+      url: 'https://chat-api.to8to.com:6443/audio/audioSelfToText',
+      method: 'POST',
+      data: {
+        businessKey: 'aipk',
+        businessId: '1',
+        audioUrl: this.audioInputList[this.audioIndex],
+      },
+    })
+    console.log('res', res, typeof res)
+    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+      //   this.askList = res.data
+      console.log(res)
+    }
+    return res.data
+  }
+
+  async imageToAudio() {
+    const res: any = await uni.request({
+      url: 'https://chat-api.to8to.com:6443/ai/pk/chat',
+      method: 'POST',
+      data: {
+        imageUrl: 'https://pic1.shejiben.com/case/2017/02/12/20170212161743-6b0dda85.jpg',
+      },
+    })
+    console.log('res', res, typeof res)
+    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+      //   this.askList = res.data
+      console.log(res)
+    }
+  }
+
+  async fetchKeyword(text: string): Promise<string | null> {
+    const res: any = await uni.request({
+      url: 'https://chat-api.to8to.com:6443/completions',
+      method: 'POST',
+      data: {
+        modelName: 'gpt-4-1106-preview',
+        question: `你现在是一名优秀的装修顾问，请帮我总结以下这句用户的意图 、提炼、并精简成 三  四 个关键短语 ,请参照以下这个示例 例如 ：我想把沙发颜色换成蓝色,贵妃椅沙发总结提炼之后的短语 ：蓝色贵妃椅沙发 用户诉求：${text}请把提取之后的关键词进行翻译为英文`,
+        businessKey: 'aipk',
+        businessId: '1',
+      },
+    })
+    if (res && res.statusCode === 200) {
+      console.log('🚀 ~ Index ~ fetchKeyword ~ res:', res.data)
+      return res.data.businessId
+    } else {
+      return null
+    }
+  }
+
+  async fetchKeywordResult(businessId: string | null): Promise<string> {
+    const res: any = await uni.request({
+      url: 'https://chat-api.to8to.com:6443/findRecordById',
+      method: 'POST',
+      data: {
+        businessKey: 'aipk',
+        businessId: businessId,
+      },
+    })
+    console.log('res', res, typeof res)
+    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+      console.log(res)
+      return res.data
+    } else {
+      return ''
+    }
   }
 }
 </script>
@@ -93,8 +276,9 @@ export default class Index extends Vue {
       display: flex;
       justify-content: center;
       align-items: center;
-      image {
+      .pic-result {
         width: 90%;
+        height: 160px;
       }
     }
   }
@@ -116,6 +300,11 @@ export default class Index extends Vue {
       justify-content: end;
     }
   }
+}
+
+.house-img {
+  width: 88px;
+  height: 88px;
 }
 
 .tool-item {
