@@ -1,122 +1,145 @@
 <template>
   <view class="page">
-    <scroll-view class="scroll-view" scroll-y @scroll="onScroll">
-      <view>
-        <Header @upload="showUploadTips = true" ref="header" />
-        <Tab class="tab" />
-        <List ref="list" />
-        <Feed />
-        <UploadTips v-if="showUploadTips" @close="showUploadTips = false" @upload="onUploadBtnClick" />
-        <UploadSheet v-if="showUploadSheet" @cancel="showUploadSheet = false" @photo="photo" @camera="camera" />
+    <!-- 头部用户信息 -->
+    <view class="header">
+      <view class="user">
+        <image src="/static/logo.png" mode="scaleToFill" />
+        <text>用户名</text>
       </view>
-    </scroll-view>
-    <button class="float-btn" plain v-if="isScrollToTop" @click="onClickFloatBtn">
-      <image
-        class="float-btn-icon"
-        src="https://pic.to8to.com/te/osf/af519eb5413a43d3af5f6565a069ac9d.png"
-        mode="scaleToFill"
-      />
-    </button>
-    <FloatHeader
-      @upload="showUploadTips = true"
-      ref="floatHeader"
-      v-show="showFloatHeader"
-      @close="showFloatHeader = false"
-    />
-    <FloatTab />
+      <view class="user">
+        <image src="/static/logo.png" mode="scaleToFill" />
+        <text>用户名</text>
+      </view>
+    </view>
+
+    <!-- 出图 -->
+    <view class="pic">
+      <view class="pic-1">
+        <image src="/static/logo.png" mode="scaleToFill" />
+      </view>
+      <view class="pic-1">
+        <image src="/static/logo.png" mode="scaleToFill" />
+      </view>
+    </view>
+
+    <!-- 底部tool -->
+    <view class="tool-bar">
+      <view class="left-box">
+        <view class="tool-item">
+          <text>设计我家效果</text>
+        </view>
+      </view>
+      <view class="right-box">
+        <view class="tool-item">
+          <!-- <image src="/static/logo.png" mode="scaleToFill" /> -->
+          <text>按住说话</text>
+        </view>
+        <view class="tool-item">
+          <text>快捷修图</text>
+        </view>
+        <view class="tool-item">
+          <text>暂停</text>
+        </view>
+      </view>
+      >
+    </view>
   </view>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Header from './component/header.vue'
-import Tab from './component/tab.vue'
-import List from './component/list.vue'
-import UploadTips from './component/upload-tips.vue'
-import UploadSheet from './component/upload-sheet.vue'
-import FloatHeader from './component/float-header.vue'
-import FloatTab from './component/float-tab.vue'
-
 @Component({
-  components: { Header, Tab, List, UploadTips, UploadSheet, FloatHeader, FloatTab },
+  components: {},
 })
 export default class Index extends Vue {
-  showUploadTips = false
-  showUploadSheet = false
-  isScrollToTop = false
-  showFloatHeader = false
-
-  chooseImg = 'https://pic-file-bucket.oss-cn-beijing.aliyuncs.com/24d683b5-d0dd-48a2-b697-b51bf6478370.png'
-
-  headers() {
-    const header: any = this.$refs.header
-    const floatHeader: any = this.$refs.floatHeader
-    return [header, floatHeader]
-  }
-
   mounted() {
-    // this.photo()
-  }
-
-  onUploadBtnClick() {
-    this.showUploadTips = false
-    this.showUploadSheet = true
-  }
-
-  onScroll(e: any) {
-    const list: any = this.$refs.list
-    list.scroll(e)
-    uni
-      .createSelectorQuery()
-      .in(this)
-      .select('.tab')
-      .boundingClientRect((rect: any) => {
-        // console.log(rect)
-        this.isScrollToTop = rect.top <= 0
-      })
-      .exec()
-  }
-
-  photo() {
-    console.log('photo')
-    this.headers().forEach((item: any) => {
-      item.onUpload(this.chooseImg)
-    })
-  }
-
-  camera() {
-    console.log('camera')
-    const header: any = this.$refs.header
-    const floatHeader: any = this.$refs.floatHeader
-  }
-
-  onClickFloatBtn() {
-    console.log('onClickFLoatBtn')
-    this.showFloatHeader = true
+    console.log('mounted')
   }
 }
 </script>
 
 <style lang="less" scoped>
 .page {
-  position: relative;
-  background-image: linear-gradient(0deg, #261033 0%, #1e0748 55%, #1f062a 100%);
-  .scroll-view {
-    height: 100vh;
-    width: 100%;
-    position: relative;
-  }
-  .float-btn {
-    position: absolute;
-    bottom: 232rpx;
-    right: 40rpx;
-    z-index: 1001;
-    background-color: transparent;
-    border: none;
-    &-icon {
-      width: 120rpx;
-      height: 120rpx;
+  min-height: 100vh;
+  background-color: rgb(25, 24, 24);
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20rpx;
+    .user {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      image {
+        // border-radius: 50%;
+        width: 90%;
+      }
+      text {
+        margin-top: 10rpx;
+        font-size: 24rpx;
+        color: white;
+      }
     }
+  }
+
+  .pic {
+    margin-top: 88rpx;
+    display: flex;
+    justify-content: space-between;
+    padding: 20rpx;
+    .pic-1 {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      image {
+        width: 90%;
+      }
+    }
+  }
+
+  .tool-bar {
+    display: flex;
+    justify-content: space-between;
+    // float: left;
+    position: absolute;
+    bottom: 44rpx;
+    width: 100%;
+    padding: 0 20rpx;
+
+    .left-box,
+    .right-box {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      justify-content: end;
+    }
+  }
+}
+
+.tool-item {
+  background-color: black;
+  border-radius: 44rpx;
+  overflow: hidden;
+  //   display: inline-flex;
+  //   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  image {
+    width: 40rpx;
+    height: 100%;
+  }
+  text {
+    font-size: 24rpx;
+    color: white;
+    line-height: 88rpx;
+    height: 88rpx;
+    text-align: center;
   }
 }
 </style>
