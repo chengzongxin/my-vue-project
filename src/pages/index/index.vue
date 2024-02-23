@@ -118,6 +118,10 @@ export default class Index extends Vue {
     this.selectHouseImg = this.houseImg
     const taskId = (await this.onBuild(this.selectHouseImg)) as number
 
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
     this.timer = setInterval(async () => {
       const res = await this.fetchTaskResult(taskId)
       this.progress = res.progress
@@ -133,7 +137,7 @@ export default class Index extends Vue {
     // 采集语音
     const audioUrl = this.audioInputList[this.audioIndex]
     // 语音转文字
-    const audioText = await this.audioToText(audioUrl)
+    const audioText = (await this.audioToText(audioUrl)) as string
     // 调用GPT提炼关键字
     const businessId = await this.fetchKeyword(audioText)
     // 查询GPT提炼结果
@@ -152,7 +156,7 @@ export default class Index extends Vue {
   }
 
   /* 语音转文本 */
-  async audioToText(audioUrl: string): Promise<string> {
+  async audioToText(audioUrl: string): Promise<string | null> {
     const res: any = await uni.request({
       url: 'https://chat-api.to8to.com:6443/audio/audioSelfToText',
       method: 'POST',
@@ -163,9 +167,10 @@ export default class Index extends Vue {
       },
     })
     if (res && res.statusCode === 200 && res.data) {
-      console.log(res)
+      return res.data.text
+    } else {
+      return null
     }
-    return res.data
   }
 
   /* 生成对话 */
@@ -178,7 +183,7 @@ export default class Index extends Vue {
       },
     })
     console.log('res', res, typeof res)
-    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+    if (res && res.statusCode === 200 && res.data) {
       //   this.askList = res.data
       console.log(res)
     }
@@ -193,11 +198,11 @@ export default class Index extends Vue {
         modelName: 'gpt-4-1106-preview',
         question: `你现在是一名优秀的装修顾问，请帮我总结以下这句用户的意图 、提炼、并精简成 三  四 个关键短语 ,请参照以下这个示例 例如 ：我想把沙发颜色换成蓝色,贵妃椅沙发总结提炼之后的短语 ：蓝色贵妃椅沙发 用户诉求：${text}请把提取之后的关键词进行翻译为英文`,
         businessKey: 'aipk',
-        businessId: '1',
+        businessId: `${Date.now()}`,
       },
     })
     if (res && res.statusCode === 200) {
-      console.log('🚀 ~ Index ~ fetchKeyword ~ res:', res.data)
+      console.log('🚀 ~ Index ~ fetchKeyword ~ res:', res.data.businessId)
       return res.data.businessId
     } else {
       return null
@@ -215,7 +220,7 @@ export default class Index extends Vue {
       },
     })
     console.log('res', res, typeof res)
-    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+    if (res && res.statusCode === 200 && res.data) {
       console.log(res)
       return res.data
     } else {
@@ -265,7 +270,7 @@ export default class Index extends Vue {
       },
     })
     console.log('res', res, typeof res)
-    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+    if (res && res.statusCode === 200 && res.data) {
       console.log(res)
       return res.data
     } else {
@@ -331,7 +336,6 @@ export default class Index extends Vue {
       display: flex;
       flex: 1;
       flex-direction: row;
-      justify-content: end;
     }
   }
 }
