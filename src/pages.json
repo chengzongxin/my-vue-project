@@ -2,9 +2,10 @@
   "pages": [
     {
       "path": "pages/index/index",
+      // "path": "pages/subPackage/ai-goddness-home/index",
       "style": {
-        "navigationBarTitleText": ""
-        // "navigationBarBackgroundColor": "#00000000"
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#000000"
         // "navigationStyle": "custom"
       }
     }
