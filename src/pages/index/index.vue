@@ -110,7 +110,7 @@ export default class Index extends Vue {
 
   mounted() {
     console.log('mounted')
-    // this.imageToAudio(this.houseImg)
+    this.imageToAudio(this.houseImg)
   }
 
   /* 点击出图 */
@@ -129,7 +129,7 @@ export default class Index extends Vue {
         clearInterval(this.timer)
         this.timer = null
       }
-    }, 3000)
+    }, 2000)
   }
 
   /* 按住说话 */
@@ -145,7 +145,7 @@ export default class Index extends Vue {
     // 根据关键字出图
     const taskId = (await this.onBuild(this.selectHouseImg!, keyword)) as number
     // 获取出图结果
-    const img = this.fetchTaskResult(taskId) as unknown as string
+    const img = await this.fetchTaskResult(taskId)
     // 生成讲解语音
     this.imageToAudio(img)
     this.selectHouseImg = img
@@ -184,7 +184,6 @@ export default class Index extends Vue {
     })
     console.log('res', res, typeof res)
     if (res && res.statusCode === 200 && res.data) {
-      //   this.askList = res.data
       console.log(res)
     }
   }
@@ -211,6 +210,24 @@ export default class Index extends Vue {
 
   /* 查询提炼结果 */
   async fetchKeywordResult(businessId: string | null): Promise<string> {
+    return new Promise((resolve) => {
+      if (this.timer) {
+        clearInterval(this.timer)
+        this.timer = null
+      }
+      this.timer = setInterval(async () => {
+        const res = await this.fetchKeywordById(businessId)
+        if (res.queryStatus === 1) {
+          clearInterval(this.timer)
+          this.timer = null
+          resolve(res.text)
+        }
+      }, 3000)
+    })
+  }
+
+  /* 轮训关键词结果 */
+  async fetchKeywordById(businessId: string | null): Promise<any> {
     const res: any = await uni.request({
       url: 'https://chat-api.to8to.com:6443/findRecordById',
       method: 'POST',
@@ -262,6 +279,24 @@ export default class Index extends Vue {
 
   /* 抓取出图结果 */
   async fetchTaskResult(task_id: number): Promise<any> {
+    return new Promise((resolve) => {
+      if (this.timer) {
+        clearInterval(this.timer)
+        this.timer = null
+      }
+      this.timer = setInterval(async () => {
+        const res = await this.fetchTaskById(task_id)
+        this.progress = res.progress || 0
+        if (res.progress === 100) {
+          clearInterval(this.timer)
+          this.timer = null
+          resolve(res.data.result_img_urls[0])
+        }
+      }, 2000)
+    })
+  }
+
+  async fetchTaskById(task_id: number): Promise<any> {
     const res: any = await uni.request({
       url: 'https://tumaxflashapi.to8to.com/api/sd/progress',
       method: 'GET',
