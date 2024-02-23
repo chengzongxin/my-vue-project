@@ -46,8 +46,8 @@
         <view class="tool-item">
           <text>快捷修图</text>
         </view>
-        <view class="tool-item">
-          <text>暂停</text>
+        <view class="tool-item" @click="changedPlayState">
+          <text>{{ isPaused ? '播放' : '暂停' }}</text>
         </view>
       </view>
       >
@@ -117,9 +117,12 @@ export default class Index extends Vue {
 
   chatList: string[] = []
 
+  innerAudioContext: any = null
+
+  isPaused: boolean = false
+
   mounted() {
     console.log('mounted')
-    this.imageToAudio(this.houseImg)
   }
 
   clearTimer() {
@@ -132,16 +135,22 @@ export default class Index extends Vue {
   /* 点击出图 */
   async onClickBuild() {
     this.selectHouseImg = this.houseImg
-    const taskId = (await this.onBuild(this.selectHouseImg)) as number
+    uni.showLoading({ title: '讲解生成中...' })
+    const { contentText, audioUrl } = await this.imageToAudio(this.houseImg)
+    uni.hideLoading()
+    this.playAudio(audioUrl)
+    this.chatList.push(contentText)
+    // this.selectHouseImg = this.houseImg
+    // const taskId = (await this.onBuild(this.selectHouseImg)) as number
 
-    this.clearTimer()
-    this.timer = setInterval(async () => {
-      const res = await this.fetchTaskResult(taskId)
-      this.progress = res.progress
-      if (res.progress === 100) {
-        this.clearTimer()
-      }
-    }, 2000)
+    // this.clearTimer()
+    // this.timer = setInterval(async () => {
+    //   const res = await this.fetchTaskResult(taskId)
+    //   this.progress = res.progress
+    //   if (res.progress === 100) {
+    //     this.clearTimer()
+    //   }
+    // }, 2000)
   }
 
   get aAudioUrl() {
@@ -156,10 +165,10 @@ export default class Index extends Vue {
   /* 按住说话 */
   async audioInputAction() {
     // 采集语音
-    const audioUrl = this.aAudioUrl
+    const aAudioUrl = this.aAudioUrl
     // 语音转文字
-    const audioText = (await this.audioToText(audioUrl)) as string
-    this.chatList.push(`User: ${audioText}`)
+    const audioText = (await this.audioToText(aAudioUrl)) as string
+    this.chatList.push(`${audioText}`)
     // 调用GPT提炼关键字
     const businessId = await this.fetchKeyword(audioText)
     // 查询GPT提炼结果
@@ -169,7 +178,10 @@ export default class Index extends Vue {
     // 获取出图结果
     const img = await this.fetchTaskResult(taskId)
     // 生成讲解语音
-    this.imageToAudio(img)
+    const { contentText, audioUrl } = await this.imageToAudio(img)
+    this.chatList.push(`${contentText}`)
+    // 播放讲解语音
+    this.playAudio(audioUrl)
     this.selectHouseImg = img
   }
 
@@ -201,9 +213,11 @@ export default class Index extends Vue {
         audioText: '',
       },
     })
-    console.log('res', res, typeof res)
+    console.log(res)
     if (res && res.statusCode === 200 && res.data) {
-      console.log(res)
+      return res.data
+    } else {
+      return null
     }
   }
 
@@ -327,6 +341,38 @@ export default class Index extends Vue {
       return null
     }
   }
+
+  /* 播放音频 */
+  playAudio(url: string) {
+    if (!this.innerAudioContext || typeof this.innerAudioContext.onError === 'undefined') {
+      this.innerAudioContext = uni.createInnerAudioContext()
+      this.innerAudioContext.loop = true
+      uni.setInnerAudioOption({
+        obeyMuteSwitch: false,
+      })
+    }
+    this.innerAudioContext.stop()
+    this.innerAudioContext.src = url
+    if (!this.isPaused) {
+      this.innerAudioContext.play()
+    }
+  }
+
+  changedPlayState() {
+    if (this.innerAudioContext.paused) {
+      this.innerAudioContext.play()
+      this.isPaused = false
+    } else {
+      this.innerAudioContext.pause()
+      this.isPaused = true
+    }
+  }
+
+  beforeDestroy() {
+    if (this.innerAudioContext) {
+      this.innerAudioContext.destroy()
+    }
+  }
 }
 </script>
 
@@ -422,12 +468,16 @@ export default class Index extends Vue {
 
 .chat-list {
   .chat-item {
+    display: block;
     font-family: MiSans-Demibold;
     font-size: 28rpx;
-    color: #ffffff;
+    color: #a1a1a1;
     letter-spacing: 0;
     text-align: right;
     font-weight: 600;
+    background-color: #fff;
+    border-radius: 8rpx;
+    margin: 20rpx;
   }
 }
 </style>
