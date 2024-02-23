@@ -192,6 +192,7 @@ export default class Index extends Vue {
     // 获取出图结果
     uni.showLoading({ title: '出图中...' })
     const img = await this.fetchTaskResult(taskId)
+    this.houseImg = img
     uni.hideLoading()
     // 生成讲解语音
     uni.showLoading({ title: '讲解生成中...' })
@@ -200,7 +201,6 @@ export default class Index extends Vue {
     this.chatList.push(`${contentText}`)
     // 播放讲解语音
     this.playAudio(audioUrl)
-    this.houseImg = img
   }
 
   /* 语音转文本 */
@@ -360,6 +360,11 @@ export default class Index extends Vue {
 
   /* 播放音频 */
   playAudio(url: string) {
+    if (!url) {
+      this.innerAudioContext.stop()
+      this.beforeDestroy()
+      return
+    }
     if (!this.innerAudioContext || typeof this.innerAudioContext.onError === 'undefined') {
       this.innerAudioContext = uni.createInnerAudioContext()
       this.innerAudioContext.loop = false
@@ -369,6 +374,7 @@ export default class Index extends Vue {
     }
     this.innerAudioContext.stop()
     this.innerAudioContext.src = url
+    console.log('🚀 ~ Index ~ playAudio ~ url:', url)
     if (!this.isPaused) {
       this.innerAudioContext.play()
     }
