@@ -24,6 +24,13 @@
 
     <progress :percent="progress" show-info stroke-width="3" style="color: white" />
 
+    <scroll-view scroll-y style="height: 100px; width: 100%">
+      <!-- 聊天内容 -->
+      <view class="chat-list" v-for="item in chatList">
+        <text class="chat-item">{{ item }}</text>
+      </view>
+    </scroll-view>
+
     <!-- 底部tool -->
     <view class="tool-bar">
       <view class="left-box">
@@ -108,9 +115,18 @@ export default class Index extends Vue {
 
   progress: number = 0
 
+  chatList: string[] = []
+
   mounted() {
     console.log('mounted')
     this.imageToAudio(this.houseImg)
+  }
+
+  clearTimer() {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
   }
 
   /* 点击出图 */
@@ -118,26 +134,32 @@ export default class Index extends Vue {
     this.selectHouseImg = this.houseImg
     const taskId = (await this.onBuild(this.selectHouseImg)) as number
 
-    if (this.timer) {
-      clearInterval(this.timer)
-      this.timer = null
-    }
+    this.clearTimer()
     this.timer = setInterval(async () => {
       const res = await this.fetchTaskResult(taskId)
       this.progress = res.progress
       if (res.progress === 100) {
-        clearInterval(this.timer)
-        this.timer = null
+        this.clearTimer()
       }
     }, 2000)
+  }
+
+  get aAudioUrl() {
+    if (this.audioIndex >= this.audioInputList.length) {
+      this.audioIndex = 0
+    }
+    const url = this.audioInputList[this.audioIndex]
+    this.audioIndex++
+    return url
   }
 
   /* 按住说话 */
   async audioInputAction() {
     // 采集语音
-    const audioUrl = this.audioInputList[this.audioIndex]
+    const audioUrl = this.aAudioUrl
     // 语音转文字
     const audioText = (await this.audioToText(audioUrl)) as string
+    this.chatList.push(`User: ${audioText}`)
     // 调用GPT提炼关键字
     const businessId = await this.fetchKeyword(audioText)
     // 查询GPT提炼结果
@@ -149,10 +171,6 @@ export default class Index extends Vue {
     // 生成讲解语音
     this.imageToAudio(img)
     this.selectHouseImg = img
-    this.audioIndex++
-    if (this.audioIndex >= this.audioInputList.length) {
-      this.audioIndex = 0
-    }
   }
 
   /* 语音转文本 */
@@ -180,6 +198,7 @@ export default class Index extends Vue {
       method: 'POST',
       data: {
         imageUrl,
+        audioText: '',
       },
     })
     console.log('res', res, typeof res)
@@ -195,7 +214,7 @@ export default class Index extends Vue {
       method: 'POST',
       data: {
         modelName: 'gpt-4-1106-preview',
-        question: `你现在是一名优秀的装修顾问，请帮我总结以下这句用户的意图 、提炼、并精简成 三  四 个关键短语 ,请参照以下这个示例 例如 ：我想把沙发颜色换成蓝色,贵妃椅沙发总结提炼之后的短语 ：蓝色贵妃椅沙发 用户诉求：${text}请把提取之后的关键词进行翻译为英文`,
+        question: `你现在是一名优秀的装修顾问，请帮我总结以下这句用户的意图 、提炼、并精简成 三  四 个关键短语 ,请参照以下这个示例 例如 ：我想把沙发颜色换成蓝色,贵妃椅沙发总结提炼之后的短语 ：蓝色贵妃椅沙发 用户诉求：${text}请把提取之后的关键词进行翻译为英文, 并只返回英文关键词`,
         businessKey: 'aipk',
         businessId: `${Date.now()}`,
       },
@@ -211,15 +230,11 @@ export default class Index extends Vue {
   /* 查询提炼结果 */
   async fetchKeywordResult(businessId: string | null): Promise<string> {
     return new Promise((resolve) => {
-      if (this.timer) {
-        clearInterval(this.timer)
-        this.timer = null
-      }
+      this.clearTimer()
       this.timer = setInterval(async () => {
         const res = await this.fetchKeywordById(businessId)
         if (res.queryStatus === 1) {
-          clearInterval(this.timer)
-          this.timer = null
+          this.clearTimer()
           resolve(res.text)
         }
       }, 3000)
@@ -402,6 +417,17 @@ export default class Index extends Vue {
     line-height: 88rpx;
     height: 88rpx;
     text-align: center;
+  }
+}
+
+.chat-list {
+  .chat-item {
+    font-family: MiSans-Demibold;
+    font-size: 28rpx;
+    color: #ffffff;
+    letter-spacing: 0;
+    text-align: right;
+    font-weight: 600;
   }
 }
 </style>
