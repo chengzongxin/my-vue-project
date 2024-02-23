@@ -22,6 +22,8 @@
       </view>
     </view>
 
+    <progress :percent="progress" show-info stroke-width="3" style="color: white" />
+
     <!-- 底部tool -->
     <view class="tool-bar">
       <view class="left-box">
@@ -53,6 +55,8 @@ import { Component, Vue } from 'vue-property-decorator'
 })
 export default class Index extends Vue {
   //   houseImg = 'https://pic.to8to.com/te/osf/1377b11f00f3417fb60cd422f1ab0b73.jpg'
+  initImg = 'https://pic1.shejiben.com/case/2017/02/12/20170212161743-6b0dda85.jpg'
+
   houseImg = 'https://pic.to8to.com/te/osf/faf2d7977a1b412db7c39e93e0683a08.jpg'
 
   selectHouseImg: null | string = null
@@ -100,99 +104,77 @@ export default class Index extends Vue {
     height: 512,
   }
 
+  timer: any = null
+
+  progress: number = 0
+
   mounted() {
     console.log('mounted')
-    this.imageToAudio()
+    // this.imageToAudio(this.houseImg)
   }
 
-  onClickBuild() {
+  /* 点击出图 */
+  async onClickBuild() {
     this.selectHouseImg = this.houseImg
-    this.onBuild()
+    const taskId = (await this.onBuild(this.selectHouseImg)) as number
+
+    this.timer = setInterval(async () => {
+      const res = await this.fetchTaskResult(taskId)
+      this.progress = res.progress
+      if (res.progress === 100) {
+        clearInterval(this.timer)
+        this.timer = null
+      }
+    }, 3000)
   }
 
-  async onBuild(): Promise<number> {
-    this.sd_params.input_image = this.selectHouseImg as string
-    const res: any = await uni.request({
-      url: 'https://tumaxflashapi.to8to.com/api/sdxcx/sendTask',
-      method: 'POST',
-      data: {
-        use_type: 2,
-        account_id: 24004695,
-        proportion: '',
-        space_name: '客厅',
-        pic_num: 1,
-        sign: '657d92fc768b21d7dbe8c05c7b5fa6d4',
-        source_img_url: this.houseImg,
-        sd_params: this.sd_params,
-        pic_desc: '',
-        pic_type: 0,
-        style_name: '现代',
-      },
-    })
-    console.log('res', res, typeof res)
-    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
-      //   this.askList = res.data
-      console.log(res)
-      return res.data.task_id
-    } else {
-      return 0
-    }
-  }
-
-  async fetchTaskResult(taskId: number): Promise<string | null> {
-    const res: any = await uni.request({
-      url: 'https://chat-api.to8to.com:6443/audio/audioSelfToText',
-      method: 'POST',
-      data: {
-        businessKey: 'aipk',
-        businessId: '1',
-        audioUrl: this.audioInputList[this.audioIndex],
-      },
-    })
-    console.log('res', res, typeof res)
-    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
-      console.log(res)
-      return res.data
-    } else {
-      return null
-    }
-  }
-
+  /* 按住说话 */
   async audioInputAction() {
-    const audioText = await this.audioToText()
+    // 采集语音
+    const audioUrl = this.audioInputList[this.audioIndex]
+    // 语音转文字
+    const audioText = await this.audioToText(audioUrl)
+    // 调用GPT提炼关键字
     const businessId = await this.fetchKeyword(audioText)
+    // 查询GPT提炼结果
     const keyword = await this.fetchKeywordResult(businessId)
-    this.audioIndex++
-    this.sd_params.prompt += keyword
-    const taskId = await this.onBuild()
+    // 根据关键字出图
+    const taskId = (await this.onBuild(this.selectHouseImg!, keyword)) as number
+    // 获取出图结果
     const img = this.fetchTaskResult(taskId) as unknown as string
+    // 生成讲解语音
+    this.imageToAudio(img)
     this.selectHouseImg = img
+    this.audioIndex++
+    if (this.audioIndex >= this.audioInputList.length) {
+      this.audioIndex = 0
+    }
   }
 
-  async audioToText(): Promise<string> {
+  /* 语音转文本 */
+  async audioToText(audioUrl: string): Promise<string> {
     const res: any = await uni.request({
       url: 'https://chat-api.to8to.com:6443/audio/audioSelfToText',
       method: 'POST',
       data: {
         businessKey: 'aipk',
-        businessId: '1',
-        audioUrl: this.audioInputList[this.audioIndex],
+        businessId: `${Date.now()}`,
+        audioUrl,
       },
     })
-    console.log('res', res, typeof res)
-    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
-      //   this.askList = res.data
+    if (res && res.statusCode === 200 && res.data) {
       console.log(res)
     }
     return res.data
   }
 
-  async imageToAudio() {
+  /* 生成对话 */
+  async imageToAudio(imageUrl: string) {
     const res: any = await uni.request({
       url: 'https://chat-api.to8to.com:6443/ai/pk/chat',
       method: 'POST',
       data: {
-        imageUrl: 'https://pic1.shejiben.com/case/2017/02/12/20170212161743-6b0dda85.jpg',
+        imageUrl,
       },
     })
     console.log('res', res, typeof res)
@@ -202,6 +184,7 @@ export default class Index extends Vue {
     }
   }
 
+  /* 调用GPT 提炼关键字 */
   async fetchKeyword(text: string): Promise<string | null> {
     const res: any = await uni.request({
       url: 'https://chat-api.to8to.com:6443/completions',
@@ -221,6 +204,7 @@ export default class Index extends Vue {
     }
   }
 
+  /* 查询提炼结果 */
   async fetchKeywordResult(businessId: string | null): Promise<string> {
     const res: any = await uni.request({
       url: 'https://chat-api.to8to.com:6443/findRecordById',
@@ -236,6 +220,56 @@ export default class Index extends Vue {
       return res.data
     } else {
       return ''
+    }
+  }
+
+  /* 发送出图任务 */
+  async onBuild(imgUrl: string, keyword?: string): Promise<number | null> {
+    this.sd_params.input_image = imgUrl
+    if (keyword) {
+      this.sd_params.prompt += keyword
+    }
+
+    this.sd_params.input_image = this.selectHouseImg as string
+    const res: any = await uni.request({
+      url: 'https://tumaxflashapi.to8to.com/api/sdxcx/sendTask',
+      method: 'POST',
+      data: {
+        use_type: 2,
+        account_id: 24004695,
+        proportion: '',
+        space_name: '客厅',
+        pic_num: 1,
+        sign: '657d92fc768b21d7dbe8c05c7b5fa6d4',
+        source_img_url: imgUrl,
+        sd_params: this.sd_params,
+        pic_desc: '',
+        pic_type: 0,
+        style_name: '现代',
+      },
+    })
+    if (res && res.statusCode === 200 && res.data) {
+      return res.data.data.task_id
+    } else {
+      return null
+    }
+  }
+
+  /* 抓取出图结果 */
+  async fetchTaskResult(task_id: number): Promise<any> {
+    const res: any = await uni.request({
+      url: 'https://tumaxflashapi.to8to.com/api/sd/progress',
+      method: 'GET',
+      data: {
+        task_id,
+      },
+    })
+    console.log('res', res, typeof res)
+    if (res && res.statusCode === 200 && res.data && res.data.length > 0) {
+      console.log(res)
+      return res.data
+    } else {
+      return null
     }
   }
 }
