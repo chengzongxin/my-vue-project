@@ -3,23 +3,27 @@
     <!-- 头部用户信息 -->
     <view class="header">
       <view class="user">
-        <image src="/static/logo.png" mode="scaleToFill" />
-        <text>用户名</text>
+        <image src="https://pic.to8to.com/te/osf/8a975089c34c49cfb320e7ddceb90c03.jpg" mode="aspectFit" />
+        <text>xxx</text>
       </view>
-      <view class="user">
-        <image src="/static/logo.png" mode="scaleToFill" />
+      <!-- <view class="user">
+        <image src="https://pic.to8to.com/te/osf/9c324dc625144388809ba2488b46395a.jpg" mode="scaleToFill" />
         <text>用户名</text>
-      </view>
+      </view> -->
     </view>
 
     <!-- 出图 -->
     <view class="pic">
       <view class="pic-1">
-        <image class="pic-result" :src="selectHouseImg" mode="scaleToFill" />
+        <image class="pic-result" :src="houseImg" mode="scaleToFill" />
       </view>
-      <view class="pic-1">
-        <image class="pic-result" src="/static/logo.png" mode="scaleToFill" />
-      </view>
+      <!-- <view class="pic-1">
+        <image
+          class="pic-result"
+          src="https://pic.to8to.com/te/osf/bc2ecc4556d7409c8488278985e2fab0.png"
+          mode="scaleToFill"
+        />
+      </view> -->
     </view>
 
     <progress :percent="progress" show-info stroke-width="3" style="color: white" />
@@ -35,7 +39,7 @@
     <view class="tool-bar">
       <view class="left-box">
         <view class="tool-item">
-          <image class="house-img" v-if="selectHouseImg" :src="selectHouseImg" mode="scaleToFill" />
+          <image class="house-img" v-if="aiHouseImg" :src="aiHouseImg" mode="scaleToFill" />
           <text v-else @click="onClickBuild">设计我家效果</text>
         </view>
       </view>
@@ -66,13 +70,13 @@ export default class Index extends Vue {
 
   houseImg = 'https://pic.to8to.com/te/osf/faf2d7977a1b412db7c39e93e0683a08.jpg'
 
-  selectHouseImg: null | string = null
+  aiHouseImg: null | string = null
 
   audioInputList = [
-    'https://pic.to8to.com/te/osf/4d22ff087c884560849d7c22f2ba0021.m4a',
+    'https://pic.to8to.com/te/osf/347e16574b2041bbbbe8099aedc81d42.m4a',
+    'https://pic.to8to.com/te/osf/0b77d07ba4a340c193ce2b5543f53ff4.m4a',
     'https://pic.to8to.com/te/osf/a5c911b28058439a916f6b44b13d1137.m4a',
     'https://pic.to8to.com/te/osf/0b6aaa1d585d42c7a3ba1688aff066af.m4a',
-    'https://backtest-1318194069.cos.ap-guangzhou.myqcloud.com/chunk_dds_1.wav',
   ]
 
   audioIndex = 0
@@ -120,10 +124,12 @@ export default class Index extends Vue {
   innerAudioContext: any = null
 
   isPaused: boolean = false
-
-  mounted() {
-    console.log('mounted')
-  }
+  // 开场白话术
+  openAudio = 'https://pic.to8to.com/te/osf/0bb938ab8fdd4153b7fac779c94d0730.wav'
+  // 讲解语音生成完之后，先播放这个语音
+  openImgToTextAudio = 'https://pic.to8to.com/te/osf/cba6c04bea8244908c4317030b01e17b.wav'
+  // 生成图过程的讲解语音
+  openImgBuildAudio = 'https://pic.to8to.com/te/osf/4d4c664f530f423d9b14242abc20b36d.wav'
 
   clearTimer() {
     if (this.timer) {
@@ -132,28 +138,34 @@ export default class Index extends Vue {
     }
   }
 
+  mounted() {
+    console.log('mounted')
+    this.init()
+  }
+
+  init() {
+    // 讲解开场白
+    this.playAudio(this.openAudio)
+    this.chatList.push('')
+  }
+
   /* 点击出图 */
   async onClickBuild() {
-    this.selectHouseImg = this.houseImg
+    // 根据关键字出图
+    const taskId = (await this.onBuild(this.houseImg)) as number
+    // 获取出图结果
+    uni.showLoading({ title: '出图中...' })
+    const img = await this.fetchTaskResult(taskId) //3427
+    uni.hideLoading()
+    this.houseImg = img
     uni.showLoading({ title: '讲解生成中...' })
     const { contentText, audioUrl } = await this.imageToAudio(this.houseImg)
     uni.hideLoading()
     this.playAudio(audioUrl)
     this.chatList.push(contentText)
-    // this.selectHouseImg = this.houseImg
-    // const taskId = (await this.onBuild(this.selectHouseImg)) as number
-
-    // this.clearTimer()
-    // this.timer = setInterval(async () => {
-    //   const res = await this.fetchTaskResult(taskId)
-    //   this.progress = res.progress
-    //   if (res.progress === 100) {
-    //     this.clearTimer()
-    //   }
-    // }, 2000)
   }
 
-  get aAudioUrl() {
+  aAudioUrl() {
     if (this.audioIndex >= this.audioInputList.length) {
       this.audioIndex = 0
     }
@@ -165,7 +177,8 @@ export default class Index extends Vue {
   /* 按住说话 */
   async audioInputAction() {
     // 采集语音
-    const aAudioUrl = this.aAudioUrl
+    const aAudioUrl = this.aAudioUrl()
+    console.log('aAudioUrl:', aAudioUrl)
     // 语音转文字
     const audioText = (await this.audioToText(aAudioUrl)) as string
     this.chatList.push(`${audioText}`)
@@ -173,16 +186,21 @@ export default class Index extends Vue {
     const businessId = await this.fetchKeyword(audioText)
     // 查询GPT提炼结果
     const keyword = await this.fetchKeywordResult(businessId)
+    this.chatList.push(keyword)
     // 根据关键字出图
-    const taskId = (await this.onBuild(this.selectHouseImg!, keyword)) as number
+    const taskId = (await this.onBuild(this.houseImg!, keyword)) as number
     // 获取出图结果
+    uni.showLoading({ title: '出图中...' })
     const img = await this.fetchTaskResult(taskId)
+    uni.hideLoading()
     // 生成讲解语音
+    uni.showLoading({ title: '讲解生成中...' })
     const { contentText, audioUrl } = await this.imageToAudio(img)
+    uni.hideLoading()
     this.chatList.push(`${contentText}`)
     // 播放讲解语音
     this.playAudio(audioUrl)
-    this.selectHouseImg = img
+    this.houseImg = img
   }
 
   /* 语音转文本 */
@@ -281,19 +299,19 @@ export default class Index extends Vue {
       this.sd_params.prompt += keyword
     }
 
-    this.sd_params.input_image = this.selectHouseImg as string
+    this.sd_params.input_image = this.houseImg
     const res: any = await uni.request({
       url: 'https://tumaxflashapi.to8to.com/api/sdxcx/sendTask',
       method: 'POST',
       data: {
         use_type: 2,
-        account_id: 24004695,
+        account_id: 172203313,
         proportion: '',
         space_name: '客厅',
         pic_num: 1,
-        sign: '657d92fc768b21d7dbe8c05c7b5fa6d4',
+        sign: '869c290578c116b3b09157e45bac0af9',
         source_img_url: imgUrl,
-        sd_params: this.sd_params,
+        sd_params: JSON.stringify(this.sd_params),
         pic_desc: '',
         pic_type: 0,
         style_name: '现代',
@@ -309,17 +327,15 @@ export default class Index extends Vue {
   /* 抓取出图结果 */
   async fetchTaskResult(task_id: number): Promise<any> {
     return new Promise((resolve) => {
-      if (this.timer) {
-        clearInterval(this.timer)
-        this.timer = null
-      }
+      this.clearTimer()
       this.timer = setInterval(async () => {
-        const res = await this.fetchTaskById(task_id)
-        this.progress = res.progress || 0
-        if (res.progress === 100) {
-          clearInterval(this.timer)
-          this.timer = null
-          resolve(res.data.result_img_urls[0])
+        const data = await this.fetchTaskById(task_id)
+        const { progress, result_img_urls } = data.data
+        console.log('🚀 ~ Index ~ this.timer=setInterval ~ data:', progress, result_img_urls)
+        this.progress = progress || 0
+        if (progress === 100) {
+          this.clearTimer()
+          resolve(result_img_urls[0])
         }
       }, 2000)
     })
@@ -346,7 +362,7 @@ export default class Index extends Vue {
   playAudio(url: string) {
     if (!this.innerAudioContext || typeof this.innerAudioContext.onError === 'undefined') {
       this.innerAudioContext = uni.createInnerAudioContext()
-      this.innerAudioContext.loop = true
+      this.innerAudioContext.loop = false
       uni.setInnerAudioOption({
         obeyMuteSwitch: false,
       })
@@ -391,7 +407,8 @@ export default class Index extends Vue {
       align-items: center;
       image {
         // border-radius: 50%;
-        width: 90%;
+        // width: 90%;
+        height: 300rpx;
       }
       text {
         margin-top: 10rpx;
@@ -402,7 +419,7 @@ export default class Index extends Vue {
   }
 
   .pic {
-    margin-top: 88rpx;
+    margin-top: 44rpx;
     display: flex;
     justify-content: space-between;
     padding: 20rpx;
@@ -413,7 +430,7 @@ export default class Index extends Vue {
       align-items: center;
       .pic-result {
         width: 90%;
-        height: 160px;
+        height: 600rpx;
       }
     }
   }

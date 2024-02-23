@@ -4,8 +4,9 @@
       "path": "pages/index/index",
       // "path": "pages/subPackage/ai-goddness-home/index",
       "style": {
-        "navigationBarTitleText": "",
-        "navigationBarBackgroundColor": "#000000"
+        "navigationBarTitleText": "直播PK",
+        "navigationBarBackgroundColor": "#000000",
+        "navigationBarTextStyle": "white"
         // "navigationStyle": "custom"
       }
     }
