@@ -1,7 +1,13 @@
 <template>
   <view class="page">
     <!-- 头部用户信息 -->
-    <!-- <text style="color: white">{{ JSON.stringify(data) }}</text> -->
+    <view
+      class="input weui-grid"
+      hover-class="weui-grid_active"
+      @longpress="longPressStart"
+      @touchmove="longPressMove"
+      @touchend="longPressEnd"
+    ></view>
     <view class="header">
       <view class="user">
         <image src="https://pic.to8to.com/te/osf/8a975089c34c49cfb320e7ddceb90c03.jpg" mode="aspectFit" />
@@ -46,7 +52,7 @@
       </view>
       <view class="right-box">
         <view class="tool-item">
-          <text @click="audioInputAction">按住说话</text>
+          <text @longpress="longPressStart" @touchmove="longPressMove" @touchend="longPressEnd">按住说话</text>
         </view>
         <view class="tool-item">
           <text @click="holdSpeak">{{ isSpeaking ? '结束录音' : '开始录音' }}</text>
@@ -55,6 +61,10 @@
           <text>{{ isPaused ? '播放' : '暂停' }}</text>
         </view>
       </view>
+    </view>
+
+    <view v-show="isSpeaking" class="hold">
+      <view class="hold-txt">松开发送</view>
     </view>
   </view>
 </template>
@@ -142,6 +152,22 @@ export default class Index extends Vue {
       clearInterval(this.timer)
       this.timer = null
     }
+  }
+
+  longPressStart() {
+    console.log('🚀 ~ Index ~ longPressStart ~ longPressStart:')
+    this.recorderManager.start({})
+    this.isSpeaking = true
+  }
+
+  longPressMove() {
+    console.log('🚀 ~ Index ~ longPressMove ~ longPressMove:')
+  }
+
+  longPressEnd() {
+    console.log('🚀 ~ Index ~ longPressEnd ~ longPressEnd:')
+    this.recorderManager.stop()
+    this.isSpeaking = false
   }
 
   mounted() {
@@ -474,7 +500,6 @@ export default class Index extends Vue {
   }
 
   .pic {
-    margin-top: 44rpx;
     display: flex;
     justify-content: space-between;
     padding: 20rpx;
@@ -550,6 +575,27 @@ export default class Index extends Vue {
     background-color: #fff;
     border-radius: 8rpx;
     margin: 20rpx;
+  }
+}
+
+.hold {
+  background: #1d192e;
+  border-radius: 24px 24px 0px 0px;
+  height: 300rpx;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 88rpx;
+  .hold-txt {
+    text-align: center;
+
+    font-family: MiSans-Demibold;
+    font-size: 16px;
+    color: #8a8897;
+    letter-spacing: 0;
+    text-align: center;
+    font-weight: 600;
   }
 }
 </style>
