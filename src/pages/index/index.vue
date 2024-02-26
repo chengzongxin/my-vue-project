@@ -305,11 +305,11 @@ export default class Index extends Vue {
       method: 'POST',
       data: {
         use_type: 2,
-        account_id: 172203313,
+        account_id: 172177446,
         proportion: '',
         space_name: '客厅',
         pic_num: 1,
-        sign: '869c290578c116b3b09157e45bac0af9',
+        sign: '00b4b21ada930118b7afed34987c5f80',
         source_img_url: imgUrl,
         sd_params: JSON.stringify(this.sd_params),
         pic_desc: '',
@@ -362,7 +362,6 @@ export default class Index extends Vue {
   playAudio(url: string) {
     if (!url) {
       this.innerAudioContext.stop()
-      this.beforeDestroy()
       return
     }
     if (!this.innerAudioContext || typeof this.innerAudioContext.onError === 'undefined') {
