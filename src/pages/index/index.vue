@@ -1,6 +1,7 @@
 <template>
   <view class="page">
     <!-- 头部用户信息 -->
+    <!-- <text style="color: white">{{ JSON.stringify(data) }}</text> -->
     <view class="header">
       <view class="user">
         <image src="https://pic.to8to.com/te/osf/8a975089c34c49cfb320e7ddceb90c03.jpg" mode="aspectFit" />
@@ -48,13 +49,12 @@
           <text @click="audioInputAction">按住说话</text>
         </view>
         <view class="tool-item">
-          <text>快捷修图</text>
+          <text @click="holdSpeak">{{ isSpeaking ? '结束录音' : '开始录音' }}</text>
         </view>
         <view class="tool-item" @click="changedPlayState">
           <text>{{ isPaused ? '播放' : '暂停' }}</text>
         </view>
       </view>
-      >
     </view>
   </view>
 </template>
@@ -131,6 +131,12 @@ export default class Index extends Vue {
   // 生成图过程的讲解语音
   openImgBuildAudio = 'https://pic.to8to.com/te/osf/4d4c664f530f423d9b14242abc20b36d.wav'
 
+  recorderManager = uni.getRecorderManager()
+
+  voicePath: string | undefined = undefined
+
+  isSpeaking: boolean = false
+
   clearTimer() {
     if (this.timer) {
       clearInterval(this.timer)
@@ -146,7 +152,33 @@ export default class Index extends Vue {
   init() {
     // 讲解开场白
     this.playAudio(this.openAudio)
-    this.chatList.push('')
+
+    this.recorderManager.onStop((res) => {
+      console.log('recorder stop' + JSON.stringify(res))
+      this.voicePath = res.tempFilePath
+      console.log('upload')
+
+      uni.uploadFile({
+        url: 'http://10.4.41.44:8080/upload/images',
+        fileType: 'audio',
+        filePath: this.voicePath,
+        name: 'file',
+        success: ({ data, statusCode }) => {
+          // data 是 string 类型，需要转换成json对象
+          const audioUrl = JSON.parse(data).data
+          this.playAudio(audioUrl)
+          this.onBuildFlow(audioUrl)
+        },
+        fail: (error) => {},
+      })
+    })
+
+    this.recorderManager.onStart(() => {
+      console.log('recorder start')
+    })
+    this.recorderManager.onFrameRecorded((res) => {
+      console.log('recorder frameRecorded', res)
+    })
   }
 
   /* 点击出图 */
@@ -174,11 +206,25 @@ export default class Index extends Vue {
     return url
   }
 
+  holdSpeak() {
+    if (this.isSpeaking) {
+      this.recorderManager.stop()
+      this.isSpeaking = false
+    } else {
+      this.recorderManager.start({})
+      this.isSpeaking = true
+    }
+  }
+
   /* 按住说话 */
   async audioInputAction() {
     // 采集语音
     const aAudioUrl = this.aAudioUrl()
-    console.log('aAudioUrl:', aAudioUrl)
+    // console.log('aAudioUrl:', aAudioUrl)
+    this.onBuildFlow(aAudioUrl)
+  }
+
+  async onBuildFlow(aAudioUrl: string) {
     // 语音转文字
     const audioText = (await this.audioToText(aAudioUrl)) as string
     this.chatList.push(`${audioText}`)
@@ -335,7 +381,11 @@ export default class Index extends Vue {
         this.progress = progress || 0
         if (progress === 100) {
           this.clearTimer()
-          resolve(result_img_urls[0])
+          const imgUrl = result_img_urls[0].replace(
+            'file.t8tcdn.com',
+            'hz-t8t-3dfile-test.oss-cn-hangzhou.aliyuncs.com'
+          )
+          resolve(imgUrl)
         }
       }, 2000)
     })
@@ -447,7 +497,7 @@ export default class Index extends Vue {
     position: absolute;
     bottom: 44rpx;
     width: 100%;
-    padding: 0 20rpx;
+    // padding: 0 20rpx;
 
     .left-box,
     .right-box {
