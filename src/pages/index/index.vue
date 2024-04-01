@@ -13,11 +13,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-// import WarnSunBtn from '@chengzongxin/test-com/lib/warn-sun-btn.umd.min.js'
-// import OssUploader, { BIZ_ID_TYPE, DEFAULT_APPNAME } from '@to8to/oss-uploader/index.mp'
-// import TestCom from '@chengzongxin/test-com'
-// import TestCom from '@chengzongxin/test-com/lib/test-com.umd.min.js'
-// import TestCom from '@chengzongxin/test-com'
 
 @Component({
   components: {
