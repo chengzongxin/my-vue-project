@@ -48,6 +48,7 @@
     "test:mp-weixin": "cross-env UNI_PLATFORM=mp-weixin jest -i"
   },
   "dependencies": {
+    "@chengzongxin/test-com": "^0.3.0",
     "@dcloudio/uni-app": "^2.0.2-3090820231124001",
     "@dcloudio/uni-app-plus": "^2.0.2-3090820231124001",
     "@dcloudio/uni-h5": "^2.0.2-3090820231124001",
@@ -75,7 +76,8 @@
     "vue": ">= 2.6.14 < 2.7",
     "vue-class-component": "^6.3.2",
     "vue-property-decorator": "^8.0.0",
-    "vuex": "^3.2.0"
+    "vuex": "^3.2.0",
+    "warn_sun_btn_yjs_zt": "^1.1.5"
   },
   "devDependencies": {
     "@babel/plugin-syntax-typescript": "^7.2.0",
